@@ -14,13 +14,19 @@ public class Client{
 
 	public void test(){
 		try {
-			HttpResponse<JsonNode> request = Unirest.get(endpoint + "/test")
+
+			JSONObject json = new JSONObject();
+			json.put("message", "Example message from client!");
+
+			String body = json.toString();
+
+			HttpResponse<JsonNode> request = Unirest.post(endpoint + "/test")
 				.header("accept", "application/json")
-				.queryString("msg", "123")
+				.body(body)
 				.asJson();
-			JSONObject json = request.getBody().getObject();
-			String msg = json.getString("message");
-			System.out.println("Response message: "+msg);
+			JSONObject response = request.getBody().getObject();
+			String msg = response.getString("message");
+			System.out.println("Response from server: "+msg);
 		}
 		catch(UnirestException e){
 			System.out.println("Request error!");
