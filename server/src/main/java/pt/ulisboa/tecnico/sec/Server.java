@@ -8,14 +8,9 @@ public class Server
 {
   public static void main( String[] args )
   {
-    JSONObject obj = new JSONObject();
-    obj.put("message","hello");
-    port(Integer.parseInt(args[0]));
-
-    get("/test", (req, res) ->  {
-      res.type("application/json");
-      return obj;
-    } );
     System.out.println( "Server address: http://localhost:" + args[0]);
+    port(Integer.parseInt(args[0]));
+    Routes routes = new Routes();
+
   }
 }
