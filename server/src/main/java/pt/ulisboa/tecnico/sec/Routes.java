@@ -10,11 +10,12 @@ public class Routes
     JSONObject obj = new JSONObject();
     obj.put("message","hello");
 
-    get("/test", (req, res) ->  {
-      res.type("application/json");
-      //chamar as outra funções
+    post("/test", (req, res) ->  {
+      System.ou.println(req.body().toString());
       return obj;
     } );
-
+    post("/", (request, response) -> {
+        // Create something
+    });
   }
 }
