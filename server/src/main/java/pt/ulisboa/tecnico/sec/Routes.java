@@ -14,8 +14,15 @@ public class Routes
       System.ou.println(req.body().toString());
       return obj;
     } );
-    post("/", (request, response) -> {
+    post("/register", (request, response) -> {
         // Create something
     });
+    put("/put", (request, response) -> {
+        // Create something
+    });
+    post("/get", (request, response) -> {
+        // Create something
+    });
+
   }
 }
