@@ -1,15 +1,18 @@
 package pt.ulisboa.tecnico.sec;
 import static spark.Spark.*;
 
-/**
- * Hello world!
- *
- */
+
 public class Server
 {
-    public static void main( String[] args )
-    {
-        get("/hello", (req, res) -> "hello");
-        System.out.println( "Server: " + args[0]);
-    }
+  public static void main( String[] args )
+  {
+
+    port(8080);
+
+    get("/test", (req, res) ->  {
+      res.type("application/json");
+      return "{\"message\":\"hello\"}";
+    } );
+    System.out.println( "Server address: " + args[0]);
+  }
 }

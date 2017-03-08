@@ -9,7 +9,14 @@
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
-      <groupId>com.sparkjava</groupId>
+      <groupId>org.slf4j</groupId> <!-- erro no logg -->
+      <artifactId>slf4j-nop</artifactId>
+      <version>1.7.24</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.sparkjava</groupId> <!-- spark -->
       <artifactId>spark-core</artifactId>
       <version>2.5.5</version>
     </dependency>
@@ -23,7 +30,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mainclass>pt.ulisboa.tecnico.sec.Server</mainclass>
-    <testArgument>Example</testArgument>
+    <testArgument>http://localhost:8080</testArgument>
   </properties>
   <build>
     <plugins>
@@ -47,6 +54,7 @@
         </configuration>
       </plugin>
       <plugin>
+        <!-- lambda -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
