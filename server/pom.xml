@@ -13,6 +13,11 @@
       <artifactId>slf4j-nop</artifactId>
       <version>1.7.24</version>
     </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20140107</version>
+    </dependency>
 
 
     <dependency>
