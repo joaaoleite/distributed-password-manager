@@ -11,7 +11,7 @@ public class Routes
     obj.put("message","hello");
 
     post("/test", (req, res) ->  {
-      System.ou.println(req.body().toString());
+      System.out.println(req.body().toString());
       return obj;
     } );
     post("/register", (request, response) -> {
