@@ -10,12 +10,12 @@ public class Server
   {
     JSONObject obj = new JSONObject();
     obj.put("message","hello");
-    port(8080);
+    port(Integer.parseInt(args[0]));
 
     get("/test", (req, res) ->  {
       res.type("application/json");
       return obj;
     } );
-    System.out.println( "Server address: " + args[0]);
+    System.out.println( "Server address: http://localhost:" + args[0]);
   }
 }
