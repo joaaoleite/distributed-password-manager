@@ -6,27 +6,41 @@ import org.json.JSONObject;
 public class Routes
 {
   public Routes(){
-    System.out.println( "Routes Starting");
-    JSONObject obj = new JSONObject();
-    obj.put("message","hello");
 
-    post("/test", (req, res) ->  {
-      JSONObject test = new JSONObject(req.body().toString());
 
-      System.out.println(test.get("cona"));
-      return obj;
-    } );
     post("/register", (request, response) -> {
-        // Create something
-        return obj;
+      JSONObject reqObj = new JSONObject(request.body().toString());
+      System.out.println(reqObj.get("publicKey"));
+      String pubKey =reqObj.get("publicKey").toString();
+
+      JSONObject resObj= new JSONObject();
+      resObj.put("status","success");
+      return resObj;
     });
     put("/put", (request, response) -> {
-        // Create something
-        return obj;
+      JSONObject reqObj = new JSONObject(request.body().toString());
+      System.out.println(reqObj.get("publicKey"));
+      String pubKey =reqObj.get("publicKey").toString();;
+      String domain =reqObj.get("domain").toString();;
+      String username =reqObj.get("username").toString();;
+      String password =reqObj.get("password").toString();;
+      System.out.println(pubKey+domain+username+password);
+      JSONObject resObj= new JSONObject();
+      resObj.put("status","success");
+      return resObj;
     });
     post("/get", (request, response) -> {
-        // Create something
-        return obj;
+      JSONObject reqObj = new JSONObject(request.body().toString());
+      System.out.println(reqObj.get("publicKey"));
+      String pubKey =reqObj.get("publicKey").toString();;
+      String domain =reqObj.get("domain").toString();;
+      String username =reqObj.get("username").toString();;
+
+
+
+      JSONObject resObj= new JSONObject();
+      resObj.put("status","success");
+      return resObj;
     });
 
   }
