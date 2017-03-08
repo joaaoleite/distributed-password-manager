@@ -24,7 +24,7 @@ public class Routes
       String domain =reqObj.get("domain").toString();;
       String username =reqObj.get("username").toString();;
       String password =reqObj.get("password").toString();;
-      System.out.println(pubKey+domain+username+password);
+
       JSONObject resObj= new JSONObject();
       resObj.put("status","success");
       return resObj;
