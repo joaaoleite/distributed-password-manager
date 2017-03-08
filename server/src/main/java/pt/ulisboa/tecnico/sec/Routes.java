@@ -11,17 +11,22 @@ public class Routes
     obj.put("message","hello");
 
     post("/test", (req, res) ->  {
-      System.out.println(req.body().toString());
+      JSONObject test = new JSONObject(req.body().toString());
+
+      System.out.println(test.get("cona"));
       return obj;
     } );
     post("/register", (request, response) -> {
         // Create something
+        return obj;
     });
     put("/put", (request, response) -> {
         // Create something
+        return obj;
     });
     post("/get", (request, response) -> {
         // Create something
+        return obj;
     });
 
   }
