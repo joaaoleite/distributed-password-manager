@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.sec;
 
 import sun.security.x509.X509CertInfo;
-
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
@@ -17,20 +18,22 @@ public class GenCert {
       SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
       keyGen.initialize(2048, random);
       KeyPair pair = keyGen.generateKeyPair();
-      PrivateKey priv = pair.getPrivate();
-      PublicKey pub = pair.getPublic();
       X509Certificate[] cert = generateCertificate(pair);
-      System.out.println("Private: "+priv);
-      System.out.println("Public: "+pub);
-      System.out.println("Certificate: "+cert);
-    //  System.out.println(cert.getPublicKey());
-    }
 
-    /*public static void write(Public , String keyPath) throws Exception {
-        FileOutputStream fos = new FileOutputStream(keyPath);
-        fos.write(key);
-        fos.close();
-    }*/
+      Object[] array = {pair, cert};
+
+      ByteArrayOutputStream b = new ByteArrayOutputStream();
+      ObjectOutputStream o =  new ObjectOutputStream(b);
+      o.writeObject(array);
+      byte[] res = b.toByteArray();
+      o.close();
+      b.close();
+
+      FileOutputStream fos = new FileOutputStream("keys/keyAndCert.dat");
+      fos.write(res);
+      fos.close();
+
+    }
 
     public static X509Certificate[] generateCertificate(KeyPair pair) throws Exception {
         X509CertInfo info = new X509CertInfo();
