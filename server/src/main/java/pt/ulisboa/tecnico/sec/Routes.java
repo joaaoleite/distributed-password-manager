@@ -10,7 +10,7 @@ public class Routes
 
     post("/register", (request, response) -> {
       JSONObject reqObj = new JSONObject(request.body().toString());
-      System.out.println(reqObj.get("publicKey"));
+      System.out.println("HTTP POST /register");
       String pubKey =reqObj.get("publicKey").toString();
 
       JSONObject resObj= new JSONObject();
@@ -19,7 +19,7 @@ public class Routes
     });
     put("/put", (request, response) -> {
       JSONObject reqObj = new JSONObject(request.body().toString());
-      System.out.println(reqObj.get("publicKey"));
+      System.out.println("HTTP PUT /put");
       String pubKey =reqObj.get("publicKey").toString();;
       String domain =reqObj.get("domain").toString();;
       String username =reqObj.get("username").toString();;
@@ -31,7 +31,7 @@ public class Routes
     });
     post("/get", (request, response) -> {
       JSONObject reqObj = new JSONObject(request.body().toString());
-      System.out.println(reqObj.get("publicKey"));
+      System.out.println("HTTP POST /get");
       String pubKey =reqObj.get("publicKey").toString();;
       String domain =reqObj.get("domain").toString();;
       String username =reqObj.get("username").toString();;
