@@ -9,6 +9,7 @@ public class Routes
 
 
     post("/register", (request, response) -> {
+      //falta o confirm
       JSONObject reqObj = new JSONObject(request.body().toString());
       System.out.println("HTTP POST /register");
       String pubKey =reqObj.get("publicKey").toString();
