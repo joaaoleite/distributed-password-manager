@@ -1,21 +1,23 @@
+
 package pt.ulisboa.tecnico.sec;
 
-import com.mashape.unirest.http.*;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONObject;
+public class Client {
 
-public class Client{
+	private KeyStore keyStore;
 
-	public static void main( String[] args ){
+	public Client(KeyStore keyStore, String address, int port){
+		this.keyStore = keyStore;
+	}
 
-		String address = args[0];
-		int port = Integer.parseInt(args[1]);
+	public void register(){
 
-		System.out.println("Creating client...");
-		System.out.println("Requests are going to "+address+":"+port);
+	}
 
-		HttpApi httpApi = new HttpApi(address, port);
+	public void savePassword(String domain, String username, String password){
+	
+	}
 
-		httpApi.register("abc123");
+	public String retrievePassword(String domain, String username){
+		return "123456789";
 	}
 }

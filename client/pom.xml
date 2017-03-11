@@ -44,7 +44,7 @@
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mainclass>pt.ulisboa.tecnico.sec.Client</mainclass>
+		<mainclass>pt.ulisboa.tecnico.sec.Main</mainclass>
 		<address>localhost</address>
 		<port>8080</port>
 	</properties>
