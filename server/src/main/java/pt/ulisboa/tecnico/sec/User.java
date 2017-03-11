@@ -2,33 +2,32 @@ package pt.ulisboa.tecnico.sec;
 
 public class User
 {
-  String publicKey;
-  String domain;
-  String username;
-  String password;
-  public User(String publickey){
+  private String publicKey;
+  private String domain;
+  private String username;
+  private String password;
+  public User(String publicKey){
     this.publicKey=publicKey;
   }
 
-  public static void set(String publicKey, String domain,  String username, String password) {
+  public void set(String publicKey, String domain,  String username, String password) {
     this.publicKey=publicKey;
     this.domain=domain;
     this.username=username;
     this.password=password;
   }
-  public String getKey(String publicKey) {
-    return publicKey;
+  public String getKey() {
+    return this.publicKey;
   }
-  public String getDomain(String domain) {
-    return domain;
+  public String getDomain() {
+    System.out.println("cona");
+    return this.domain;
   }
-  public String getUsername(String username) {
-    return username;
+  public String getUsername() {
+    return this.username;
   }
-  public String getPassword(String password) {
-    return password;
+  public String getPassword() {
+    return this.password;
   }
-
-
 
 }
