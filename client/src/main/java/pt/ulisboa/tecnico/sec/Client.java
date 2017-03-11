@@ -14,8 +14,9 @@ public class Client{
 		System.out.println("Creating client...");
 		System.out.println("Requests are going to "+address+":"+port);
 
-		HttpApi httpApi = new HttpApi(address, port);
+		//HttpApi httpApi = new HttpApi(address, port);
+		//httpApi.register("abc123");
 
-		httpApi.register("abc123");
+		ClientConsole c = new ClientConsole();
 	}
 }
