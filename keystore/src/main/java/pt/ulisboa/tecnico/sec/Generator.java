@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.sec;
 
 import sun.security.x509.X509CertInfo;
-import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,30 +9,28 @@ import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import sun.security.x509.*;
+import java.io.File;
 
-public class GenCert {
+public class Generator {
 
-    public static void main(String[] args) throws Exception{
-      KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-      SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-      keyGen.initialize(2048, random);
-      KeyPair pair = keyGen.generateKeyPair();
-      X509Certificate[] cert = generateCertificate(pair);
+  public static Box generateKeyCertBox() throws Exception{
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+    keyGen.initialize(2048, random);
+    KeyPair pair = keyGen.generateKeyPair();
+    X509Certificate[] cert = generateCertificate(pair);
+    return new Box(pair, cert);
+  }
 
-      Object[] array = {pair, cert};
-
-      ByteArrayOutputStream b = new ByteArrayOutputStream();
-      ObjectOutputStream o =  new ObjectOutputStream(b);
-      o.writeObject(array);
-      byte[] res = b.toByteArray();
-      o.close();
-      b.close();
-
-      FileOutputStream fos = new FileOutputStream("keys/keyAndCert.dat");
-      fos.write(res);
-      fos.close();
-
-    }
+  public static void write(Box input) throws Exception{
+    File yourFile = new File("keys/test.dat");
+    yourFile.createNewFile();
+    FileOutputStream fileOut = new FileOutputStream(yourFile, false);
+    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+    out.writeObject(input);
+    out.close();
+    fileOut.close();
+  }
 
     public static X509Certificate[] generateCertificate(KeyPair pair) throws Exception {
         X509CertInfo info = new X509CertInfo();

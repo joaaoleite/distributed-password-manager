@@ -17,7 +17,7 @@
   </dependencies>
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mainclass>pt.ulisboa.tecnico.sec.GenCert</mainclass>
+		<mainclass>pt.ulisboa.tecnico.sec.KeyStore</mainclass>
 	</properties>
   <build>
 		<plugins>
