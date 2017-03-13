@@ -41,13 +41,13 @@ public class Client {
 		String domain = session.AES().encrypt(dmain);
 		String username = session.AES().encrypt(usrname);
 		String password = session.AES().encrypt(passwd);
-		return api.put(session.getPublicKey(),domain,username,password);
+		return api.put(domain,username,password);
 	}
 
 	public String retrievePassword(String dmain, String usrname){
 		String domain = session.AES().encrypt(dmain);
 		String username = session.AES().encrypt(usrname);
-		String password = api.get(session.getPublicKey(),domain,username);
+		String password = api.get(domain,username);
 		return session.AES().decrypt(password);
 	}
 }

@@ -1,3 +1,4 @@
+package pt.ulisboa.tecnico.sec.http;
 
 import java.util.Base64;
 import java.util.ArrayList;

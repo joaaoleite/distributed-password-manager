@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec.security;
+package pt.ulisboa.tecnico.sec.http;
 
 import java.security.Key;
 import org.json.JSONObject;

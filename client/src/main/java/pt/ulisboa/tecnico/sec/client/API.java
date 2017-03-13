@@ -30,7 +30,7 @@ public class API{
 			String id = response.getString("key");
 			return new String[] {key, id};
 		}
-		catch(UnirestException e){
+		catch(Exception e){
 			throw new RegisterFailException();
 		}
 	}
@@ -45,7 +45,7 @@ public class API{
 			if(!status.equals("ok"))
 				throw new ConfirmFailException(status);
 		}
-		catch(UnirestException e){
+		catch(Exception e){
 			throw new ConfirmFailException();
 		}
 	}
@@ -60,9 +60,9 @@ public class API{
 			JSONObject response = http.signedPost(endpoint+"/put", params);
 			String status = response.getString("status");
 			if(!status.equals("ok"))
-				throw new ConfirmFailException(status);
+				throw new PutFailException(status);
 		}
-		catch(UnirestException e){
+		catch(Exception e){
 			throw new PutFailException();
 		}
 	}
@@ -78,7 +78,7 @@ public class API{
 			if(password.equals("") || password==null)
 				throw new GetFailException(status);
 		}
-		catch(UnirestException e){
+		catch(Exception e){
 			throw new GetFailException();
 		}
 	}

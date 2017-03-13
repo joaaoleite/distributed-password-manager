@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec.security;
+package pt.ulisboa.tecnico.sec.http;
 
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
