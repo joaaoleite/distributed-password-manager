@@ -4,8 +4,7 @@ import java.security.PublicKey;
 import java.util.Base64;
 import org.json.JSONObject;
 
-import pt.ulisboa.tecnico.sec.http.Nounces;
-import pt.ulisboa.tecnico.sec.http.DigitalSignature;
+import pt.ulisboa.tecnico.sec.http.*;
 
 import pt.ulisboa.tecnico.sec.exceptions.*;
 
@@ -24,7 +23,7 @@ public class API{
 		http.sign(key);
 	}
 
-	public String[] register(){
+	public String[] register() throws RegisterFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
@@ -38,7 +37,7 @@ public class API{
 		}
 	}
 
-	public void confirm(String id){
+	public void confirm(String id) throws ConfirmFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
@@ -53,7 +52,7 @@ public class API{
 		}
 	}
 
-	public void put(String domain, String username, String password){
+	public void put(String domain, String username, String password) throws PutFailException {
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
@@ -70,7 +69,7 @@ public class API{
 		}
 	}
 
-	public String get(String domain, String username){
+	public String get(String domain, String username) throws GetFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);

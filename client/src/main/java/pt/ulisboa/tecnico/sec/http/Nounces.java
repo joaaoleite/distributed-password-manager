@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.sec.http;
 import java.util.Base64;
 import java.util.ArrayList;
 import java.security.PublicKey;
-import java.nio.Buffer.ByteBuffer;
+import java.nio.ByteBuffer;
 
 public class Nounces extends ArrayList<String> {
 
