@@ -1,19 +1,19 @@
-
 package pt.ulisboa.tecnico.sec;
+
 import sun.print.resources.serviceui;
 import java.security.Key;
-import pt.ulisboa.tecnico.sec.security.RSA;
+
+import pt.ulisboa.tecnico.sec.client.API;
+import pt.ulisboa.tecnico.sec.client.Session;
 
 public class Client {
 
 	private Session session;
-	private HttpApi api;
-	private RSA rsa;
+	private API api;
 
 	public Client(Session session, String address, int port){
+		this.api = new API(address, port, session.getPublicKey());
 		this.session = session;
-		this.api = new HttpApi(address,port);
-		this.rsa = new RSA(session.getKeyPair());
 	}
 
 	public boolean register(){
@@ -25,8 +25,11 @@ public class Client {
 				return false;
 			}
 			try{
-				Key key = api.register(session.getPublicKey());
-				return api.confirm(key);
+				String[] response = api.register();
+				String key = response[0];
+				String id = response[1];
+				api.confirm(id);
+				api.enableDigitalSignature(key);
 			}
 			catch(Exception e){
 				System.out.println("Error on register! Trying again...");

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec;
+package pt.ulisboa.tecnico.sec.client;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;

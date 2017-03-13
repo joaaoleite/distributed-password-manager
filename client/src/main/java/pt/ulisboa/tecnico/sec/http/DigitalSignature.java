@@ -12,6 +12,9 @@ import javax.crypto.KeyGenerator;
 import org.json.JSONObject;
 import java.util.Date;
 import sun.nio.cs.ext.PCK;
+import javax.crypto.spec.SecretKeySpec;
+
+import pt.ulisboa.tecnico.sec.exceptions.*;
 
 /** Generate a Message Authentication Code */
 public class DigitalSignature {
@@ -41,14 +44,15 @@ public class DigitalSignature {
 	}
 
 	public DigitalSignature(String key) {
-		this.key = null; //TODO: string to key
+		byte[] keyBytes = Base64.getDecoder().decode(key);
+		this.key = new SecretKeySpec(keyBytes, "AES");
 	}
 
 	public boolean checkValidity(){
 		return validity.after(new Date());
 	}
 
-	private String assign(JSONObject resObj) throws DigitalSignatureExpiredException{
+	private String sign(JSONObject resObj) throws DigitalSignatureExpiredException{
 		if(checkValidity())
 			throw new DigitalSignatureExpiredException(validity);
 		JwtBuilder builder = Jwts.builder();
@@ -63,7 +67,7 @@ public class DigitalSignature {
 	}
 
 	private boolean verify(String token,JSONObject reqObj) throws DigitalSignatureExpiredException{
-		if(!checkValidity())
+		if(checkValidity())
 			throw new DigitalSignatureExpiredException(validity);
 		try{
 			JwtParser parser=Jwts.parser();
