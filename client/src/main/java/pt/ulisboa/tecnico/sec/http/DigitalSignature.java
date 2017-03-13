@@ -22,7 +22,8 @@ public class DigitalSignature {
 
 	public DigitalSignature() throws Exception {
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-		keyGen.init(256); // for example
+		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+		keyGen.init(128, random);
 		this.key = keyGen.generateKey();
 		this.validity = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30));
 	}
