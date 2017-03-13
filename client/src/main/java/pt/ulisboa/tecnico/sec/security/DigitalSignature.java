@@ -40,12 +40,16 @@ public class DigitalSignature {
 		this.validity = null;
 	}
 
+	public DigitalSignature(String key) {
+		this.key = null; //TODO: string to key
+	}
+
 	public boolean checkValidity(){
 		return validity.after(new Date());
 	}
 
 	private String assign(JSONObject resObj) throws DigitalSignatureExpiredException{
-		if(!checkValidity())
+		if(checkValidity())
 			throw new DigitalSignatureExpiredException(validity);
 		JwtBuilder builder = Jwts.builder();
 		for(int i = 0; i<resObj.names().length(); i++){
