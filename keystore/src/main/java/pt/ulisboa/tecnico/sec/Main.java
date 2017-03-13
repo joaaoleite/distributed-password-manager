@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.Scanner;
 import java.security.KeyPair;
 import java.security.PrivateKey;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.io.FileOutputStream;
 
 public class Main{
 
@@ -24,13 +22,6 @@ public class Main{
     PrivateKey privateKey = pair.getPrivate();
     X509Certificate[] cert = Generator.generateCertificate(pair);
 
-    KeyStore ks = KeyStore.getInstance("JCEKS");
-    ks.load(null, password);
-    KeyStore.PrivateKeyEntry privEntry = new KeyStore.PrivateKeyEntry(privateKey, cert);
-    KeyStore.PasswordProtection passwordEntry = new KeyStore.PasswordProtection(password);
-    ks.setEntry(username, privEntry, passwordEntry);
-    FileOutputStream fos = new FileOutputStream("data/" + username + ".jce");
-    ks.store(fos, password);
-    fos.close();
+    Generator.saveStore(username, password, privateKey, cert);
   }
 }

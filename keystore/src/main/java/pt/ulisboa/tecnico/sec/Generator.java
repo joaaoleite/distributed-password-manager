@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.security.spec.X509EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
+import java.io.FileOutputStream;
 
 public class Generator {
 
@@ -43,5 +44,16 @@ public class Generator {
     cert = new X509CertImpl(info);
     cert.sign(pair.getPrivate(), "SHA1withRSA");
     return new X509Certificate[]{cert};
+  }
+
+  public static void saveStore(String username, char[] password, PrivateKey privateKey, X509Certificate[] cert) throws Exception{
+    KeyStore ks = KeyStore.getInstance("JCEKS");
+    ks.load(null, password);
+    KeyStore.PrivateKeyEntry privEntry = new KeyStore.PrivateKeyEntry(privateKey, cert);
+    KeyStore.PasswordProtection passwordEntry = new KeyStore.PasswordProtection(password);
+    ks.setEntry(username, privEntry, passwordEntry);
+    FileOutputStream fos = new FileOutputStream("data/" + username + ".jce");
+    ks.store(fos, password);
+    fos.close();
   }
 }
