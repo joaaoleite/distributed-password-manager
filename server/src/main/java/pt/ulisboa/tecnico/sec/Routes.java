@@ -12,7 +12,10 @@ public class Routes
     post("/register", (request, response) -> {
       //falta o confirm
       //curl -X POST -d {"publicKey":"chave publica"} http://localhost:8080/register
+      System.out.println(request.body().toString());
+
       JSONObject reqObj = new JSONObject(request.body().toString());
+
       JSONObject resObj= new JSONObject();
       System.out.println("HTTP POST /register");
       if (reqObj.get("publicKey")!=null){
@@ -31,6 +34,7 @@ public class Routes
     put("/put", (request, response) -> {
       //curl -X PUT -d "{'publicKey':'chave publica','domain':'facebook.com','username':'bytes','password':'1237493'}" http://localhost:8080/put
       JSONObject reqObj = new JSONObject(request.body().toString());
+      System.out.println(reqObj.names());
       System.out.println("HTTP PUT /put");
       String pubKey =reqObj.get("publicKey").toString();;
       String domain =reqObj.get("domain").toString();;
@@ -45,11 +49,12 @@ public class Routes
     });
     post("/get", (request, response) -> {
       //curl -X POST -d "{'publicKey':'chave publica','domain':'facebook.com','username':'bytes'}" http://localhost:8080/get
+
       JSONObject reqObj = new JSONObject(request.body().toString());
       System.out.println("HTTP POST /get");
-      String pubKey =reqObj.get("publicKey").toString();;
-      String domain =reqObj.get("domain").toString();;
-      String username =reqObj.get("username").toString();;
+      String pubKey =reqObj.get("publicKey").toString();
+      String domain =reqObj.get("domain").toString();
+      String username =reqObj.get("username").toString();
 
       api.get(pubKey, domain,  username); //call api function
 

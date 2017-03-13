@@ -38,16 +38,16 @@ public class Main {
 
 			int option = Integer.parseInt(command);
 
-			if(option==1){
+			while(option==1){
 				String username = c.readLine("Master username: ");
 				String password = c.readLine("Master password: ");
-				try{
-					KeyStore ks = KeyStore.getInstance(username,password);
-					client = new Client(ks,address,port);
-					System.out.println(">>> Login successful");
-				}catch(Exception e){
-					System.out.println(">>> Login error");
+				Session session = new Session();
+				if(session.login(username,password)){
+					client = new Client(session,address,port);
+					option = 69;
+					System.out.println(">>> Login successful!");
 				}
+				else System.out.println(">>> Login error!");
 			}
 
 			if(client==null){
