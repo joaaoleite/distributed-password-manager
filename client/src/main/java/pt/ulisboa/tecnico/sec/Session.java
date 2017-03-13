@@ -5,11 +5,12 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 public class Session {
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
-	private Certificate certificate;
+	private X509Certificate certificate;
 
 	public PrivateKey getPrivateKey(){
 		return privateKey;
@@ -32,10 +33,12 @@ public class Session {
 			fis.close();
 
 			privateKey = (PrivateKey) ksa.getKey(username, password);
-			certificate = ksa.getCertificate(username);
+			certificate = (X509Certificate) ksa.getCertificate(username);
+			certificate.checkValidity();
 			publicKey = certificate.getPublicKey();
 			return true;
 		}catch(Exception e){
+			System.out.println(e);
 			return false;
 		}
 	}
