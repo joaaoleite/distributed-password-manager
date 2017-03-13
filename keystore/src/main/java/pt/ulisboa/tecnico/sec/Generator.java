@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
 
 public class Generator {
 
-  public static KeyPair generateKeyPair() throws Exception{
+  private static KeyPair generateKeyPair() throws Exception{
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
     keyGen.initialize(2048, random);
@@ -23,7 +23,7 @@ public class Generator {
     return pair;
   }
 
-  public static X509Certificate[] generateCertificate(KeyPair pair) throws Exception {
+  private static X509Certificate[] generateCertificate(KeyPair pair) throws Exception {
     X509CertInfo info = new X509CertInfo();
     Date from = new Date();
     Date to = new Date(from.getTime() + 365 * 86400000l); //1 year
@@ -46,7 +46,15 @@ public class Generator {
     return new X509Certificate[]{cert};
   }
 
-  public static void saveStore(String username, char[] password, PrivateKey privateKey, X509Certificate[] cert) throws Exception{
+  public static void generateStore(String username, String pass) throws Exception{
+    File dir = new File("data");
+    dir.mkdirs();
+    char[] password = pass.toCharArray();
+
+    KeyPair pair = Generator.generateKeyPair();
+    PrivateKey privateKey = pair.getPrivate();
+    X509Certificate[] cert = Generator.generateCertificate(pair);
+
     KeyStore ks = KeyStore.getInstance("JCEKS");
     ks.load(null, password);
     KeyStore.PrivateKeyEntry privEntry = new KeyStore.PrivateKeyEntry(privateKey, cert);
