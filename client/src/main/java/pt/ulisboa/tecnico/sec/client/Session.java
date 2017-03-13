@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec;
+package pt.ulisboa.tecnico.sec.client;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;
@@ -17,6 +17,9 @@ public class Session {
 	}
 	public PublicKey getPublicKey(){
 		return publicKey;
+	}
+	public KeyPair getKeyPair(){
+		return new KeyPair(publicKey,privateKey);
 	}
 	public Certificate getCertificate(){
 		return certificate;

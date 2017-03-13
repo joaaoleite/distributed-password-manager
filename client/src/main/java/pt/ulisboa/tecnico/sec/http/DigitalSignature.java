@@ -12,6 +12,9 @@ import javax.crypto.KeyGenerator;
 import org.json.JSONObject;
 import java.util.Date;
 import sun.nio.cs.ext.PCK;
+import javax.crypto.spec.SecretKeySpec;
+
+import pt.ulisboa.tecnico.sec.exceptions.*;
 
 /** Generate a Message Authentication Code */
 public class DigitalSignature {
@@ -35,26 +38,36 @@ public class DigitalSignature {
 		this.validity = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30));
 	}
 
+	public DigitalSignature(Key key) {
+		this.key = key;
+		this.validity = null;
+	}
+
+	public DigitalSignature(String key) {
+		byte[] keyBytes = Base64.getDecoder().decode(key);
+		this.key = new SecretKeySpec(keyBytes, "AES");
+	}
+
 	public boolean checkValidity(){
 		return validity.after(new Date());
 	}
 
-	private String assign(JSONObject resObj) throws DigitalSignatureExpiredException{
-		if(!checkValidity())
+	private String sign(JSONObject resObj) throws DigitalSignatureExpiredException{
+		if(checkValidity())
 			throw new DigitalSignatureExpiredException(validity);
 		JwtBuilder builder = Jwts.builder();
 		for(int i = 0; i<resObj.names().length(); i++){
 			builder.claim(resObj.names().getString(i), resObj.get(resObj.names().getString(i)).toString());
 		}
 		String token = builder
-		.signWith( SignatureAlgorithm.HS512,key)
+		.signWith( SignatureAlgorithm.HS512, key)
 		.compact();
 		System.out.println(token);
 		return token;
 	}
 
 	private boolean verify(String token,JSONObject reqObj) throws DigitalSignatureExpiredException{
-		if(!checkValidity())
+		if(checkValidity())
 			throw new DigitalSignatureExpiredException(validity);
 		try{
 			JwtParser parser=Jwts.parser();
