@@ -18,6 +18,9 @@ public class Session {
 	public PublicKey getPublicKey(){
 		return publicKey;
 	}
+	public KeyPair getKeyPair(){
+		return new KeyPair(publicKey,privateKey);
+	}
 	public Certificate getCertificate(){
 		return certificate;
 	}

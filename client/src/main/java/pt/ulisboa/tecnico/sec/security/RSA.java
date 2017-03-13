@@ -12,23 +12,20 @@ public class RSA {
 
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
-	private Cipher cipher;
+	private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
 	public RSA(PublicKey publicKey, PrivateKey privateKey) throws Exception{
 		this.publicKey = publicKey;
 		this.privateKey = privateKey;
-		this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 	}
 
 	public RSA(PublicKey publicKey) throws Exception{
 		this.publicKey = publicKey;
-		this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 	}
 
 	public RSA(KeyPair keys) throws Exception {
 		this.publicKey = keys.getPublic();
 		this.privateKey = keys.getPrivate();
-		this.cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 	}
 
 	public String encrypt(String plainText) throws Exception{

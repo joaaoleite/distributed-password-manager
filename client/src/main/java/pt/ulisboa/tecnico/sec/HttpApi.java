@@ -4,6 +4,9 @@ import com.mashape.unirest.http.*;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
+import java.util.Base64;
+import pt.ulisboa.tecnico.sec.security.Nounce;
 
 public class HttpApi{
 
@@ -13,14 +16,13 @@ public class HttpApi{
 		this.endpoint = "http://" + address + ":" + port + "/";
 	}
 
-	// TODO: change 'String publicKey' to 'Key publicKey'
-	// TODO: throw Exception if fail to register
-	public void register(String publicKey){
+	public void register(PublicKey publicKey, Nounce nounce){
 
 		System.out.println("HTTP POST /register");
 
 		try {
 			JSONObject json = new JSONObject();
+			json.put("nounce", nounce.toString());
 			json.put("publicKey", publicKey);
 
 			String body = json.toString();
@@ -30,9 +32,10 @@ public class HttpApi{
 				.body(body)
 				.asJson();
 			JSONObject response = request.getBody().getObject();
-			String status = response.getString("status");
-			if(status!=null && status.equals("success"))
-				return;  // TODO: throw Exception fail to register
+			String[] parts = request.getHeaders().get("Authorization").getValue().split(" ");
+			String token = parts[parts.length-1];
+
+			return new HttpResponse(token, response);
 		}
 		catch(UnirestException e){
 			System.out.println("Request error!");

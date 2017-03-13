@@ -35,6 +35,11 @@ public class DigitalSignature {
 		this.validity = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30));
 	}
 
+	public DigitalSignature(Key key) {
+		this.key = key;
+		this.validity = null;
+	}
+
 	public boolean checkValidity(){
 		return validity.after(new Date());
 	}
@@ -47,7 +52,7 @@ public class DigitalSignature {
 			builder.claim(resObj.names().getString(i), resObj.get(resObj.names().getString(i)).toString());
 		}
 		String token = builder
-		.signWith( SignatureAlgorithm.HS512,key)
+		.signWith( SignatureAlgorithm.HS512, key)
 		.compact();
 		System.out.println(token);
 		return token;
