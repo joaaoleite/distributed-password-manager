@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.sec.security;
 
-//provides helper methods to print byte[]
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 import io.jsonwebtoken.*;
@@ -16,24 +15,15 @@ import javax.crypto.spec.SecretKeySpec;
 
 import pt.ulisboa.tecnico.sec.exceptions.*;
 
-/** Generate a Message Authentication Code */
 public class DigitalSignature {
 
-	/*  Key key = generate();
-	JSONObject resObj = new JSONObject();
-	resObj.put("sexo","sdlals");
-	resObj.put("cona","mmkmkm");
-	String token=makeMAC(key,resObj);
-	JSONObject reqObj = new JSONObject();
-	reqObj.put("sexo","sdlals");
-	reqObj.put("cona","mmkmkm");
-	verifyMAC(token, key,reqObj);*/
 	private Key key;
 	private Date validity;
 
 	public DigitalSignature() throws Exception {
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-		keyGen.init(256); // for example
+		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+		keyGen.init(128, random);
 		this.key = keyGen.generateKey();
 		this.validity = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30));
 	}
@@ -41,6 +31,10 @@ public class DigitalSignature {
 	public DigitalSignature(Key key) {
 		this.key = key;
 		this.validity = null;
+	}
+
+	public String getKey(){
+		return Base64.getEncoder().encodeToString(key.getEncoded());
 	}
 
 	public DigitalSignature(String key) {
