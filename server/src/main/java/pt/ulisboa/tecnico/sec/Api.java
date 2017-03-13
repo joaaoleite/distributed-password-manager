@@ -6,20 +6,9 @@ public class Api
 {
   //[publicKey,[domain,[username,password]]]
   private HashMap<String,HashMap<String,HashMap<String,String>>> passwords = new HashMap<String,HashMap<String,HashMap<String,String>>>();
-  private HashMap<String,String> users = new HashMap<String,String>();
-  public String register(String publicKey) {
-    User user=new User(publicKey);
-    if(users.get(publicKey)==null){
-      users.put(publicKey,"hash");
-      return "OK";
-    }
-    return "Error";
 
-  }
   public String put(String publicKey, String domain,  String username, String password) {
 
-
-    if(users.get(publicKey)!=null){
       if(passwords.get(publicKey)!=null){
         if(passwords.get(publicKey).get(domain)!=null){
           System.out.println("ja existia o dominio");
@@ -41,15 +30,12 @@ public class Api
         System.out.println(passwords.get(publicKey).get(domain).get(username));
         return "OK";
       }
-    }
-    else{
-      return "Error";
-    }
 
-    
+
+
   }
   public String get(String publicKey, String domain,  String username) {
-    if(users.get(publicKey)!=null){
+
       if(passwords.get(publicKey)!=null){
         if(passwords.get(publicKey).get(domain)!=null){
           //existe o dominio"
@@ -73,10 +59,7 @@ public class Api
         return "Error";
 
       }
-    }
-    else{
-      return "Error";
-    }
+
 
 
   }

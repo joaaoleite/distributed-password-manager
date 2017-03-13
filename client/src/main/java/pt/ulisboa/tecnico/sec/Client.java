@@ -26,7 +26,7 @@ public class Client {
 			}
 			try{
 				String[] response = api.register();
-				String key = response[0];
+				String key = session.RSA().decrypt(response[0]);
 				String id = response[1];
 				api.confirm(id);
 				api.enableDigitalSignature(key);
@@ -38,15 +38,16 @@ public class Client {
 	}
 
 	public boolean savePassword(String dmain, String usrname, String passwd){
-		String domain = rsa.encrypt(dmain);
-		String username = rsa.encrypt(usrname);
-		String password = rsa.encrypt(passwd);
+		String domain = session.AES().encrypt(dmain);
+		String username = session.AES().encrypt(usrname);
+		String password = session.AES().encrypt(passwd);
 		return api.put(session.getPublicKey(),domain,username,password);
 	}
 
 	public String retrievePassword(String dmain, String usrname){
-		String domain = rsa.encrypt(dmain);
-		String username = rsa.encrypt(usrname);
-		return api.get(session.getPublicKey(),domain,username);
+		String domain = session.AES().encrypt(dmain);
+		String username = session.AES().encrypt(usrname);
+		String password = api.get(session.getPublicKey(),domain,username);
+		return session.AES().decrypt(password);
 	}
 }

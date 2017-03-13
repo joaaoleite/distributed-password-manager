@@ -6,10 +6,14 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+import javax.crypto.SecretKey;
+
+import pt.ulisboa.tecnico.sec.cryptography.*;
 
 public class Session {
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
+	private SecretKey secretKey;
 	private X509Certificate certificate;
 
 	public PrivateKey getPrivateKey(){
@@ -25,6 +29,13 @@ public class Session {
 		return certificate;
 	}
 
+	public AES AES(){
+		return new AES(privateKey);
+	}
+	public RSA RSA(){
+		return new RSA(publicKey, privateKey);
+	}
+
 	public boolean login(String username, String passwd){
 		try{
 			char[] password = passwd.toCharArray();
@@ -35,13 +46,13 @@ public class Session {
 			ksa.load(fis, password);
 			fis.close();
 
-			privateKey = (PrivateKey) ksa.getKey(username, password);
+			privateKey = (PrivateKey) ksa.getKey("privateKey", password);
 			certificate = (X509Certificate) ksa.getCertificate(username);
 			certificate.checkValidity();
+			secretKey = (SecretKey) ksa.getKey("secretKey", password);
 			publicKey = certificate.getPublicKey();
 			return true;
 		}catch(Exception e){
-			System.out.println(e);
 			return false;
 		}
 	}
