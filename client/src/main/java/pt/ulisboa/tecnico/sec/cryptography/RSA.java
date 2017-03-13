@@ -1,14 +1,16 @@
 package pt.ulisboa.tecnico.sec.cryptography;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import javax.crypto.Cipher;
-import javax.xml.bind.DatatypeConverter;
 import java.security.SecureRandom;
 import java.util.Base64;
 
 public class RSA {
-  private PublicKey publicKey;
+
+	private PublicKey publicKey;
 	private PrivateKey privateKey;
 	private Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
@@ -33,24 +35,17 @@ public class RSA {
 		String cipheredText = Base64.getEncoder().encodeToString(cipheredBytes);
 		return cipheredText;
 	}
-  
+
 	public String decrypt(String cipheredText) throws Exception{
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-		byte[] plainBytes = cipher.doFinal(DatatypeConverter.parseBase64Binary(text));
-		return new String(plainBytes);
 		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText);
 		byte[] textInBytes = cipher.doFinal(cipheredBytes);
 		String plainText = Base64.getEncoder().encodeToString(textInBytes);
 		return plainText;
 	}
 
-	public static KeyPair generateKeys()throws Exception{
 	public static KeyPair generateKeys() throws Exception{
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-    keyGen.initialize(2048, random);
-    KeyPair pair = keyGen.generateKeyPair();
-    return pair;
 		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
 		keyGen.initialize(2048, random);
 		KeyPair pair = keyGen.generateKeyPair();
