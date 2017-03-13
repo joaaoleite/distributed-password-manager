@@ -2,6 +2,9 @@ package pt.ulisboa.tecnico.sec;
 
 import java.io.Console;
 
+import pt.ulisboa.tecnico.sec.client.Session;
+import pt.ulisboa.tecnico.sec.Client;
+
 public class Main {
 
 	private static final String COMMANDS = ">>> Available commands: \n" +

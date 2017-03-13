@@ -31,10 +31,20 @@ public class Session {
 	}
 
 	public AES AES(){
-		return new AES(privateKey);
+		try{
+		 	return new AES(secretKey);
+	 	}
+		catch(Exception e){
+			return null;
+		}
 	}
 	public RSA RSA(){
-		return new RSA(publicKey, privateKey);
+		try{
+			return new RSA(publicKey, privateKey);
+		}
+		catch(Exception e){
+			return null;
+		}
 	}
 
 	public boolean login(String username, String passwd){

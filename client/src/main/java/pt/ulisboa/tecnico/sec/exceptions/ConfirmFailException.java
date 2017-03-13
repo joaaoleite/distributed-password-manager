@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec.security.exceptions;
+package pt.ulisboa.tecnico.sec.exceptions;
 
 import java.util.logging.Logger;
 

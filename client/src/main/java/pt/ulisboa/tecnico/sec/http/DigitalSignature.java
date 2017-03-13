@@ -45,7 +45,7 @@ public class DigitalSignature {
 		return validity.after(new Date());
 	}
 
-	private String sign(JSONObject resObj) throws ExpiredDigitalSignatureException{
+	public String sign(JSONObject resObj) throws ExpiredDigitalSignatureException{
 		if(checkValidity())
 			throw new ExpiredDigitalSignatureException(validity);
 		JwtBuilder builder = Jwts.builder();
@@ -59,7 +59,7 @@ public class DigitalSignature {
 		return token;
 	}
 
-	private boolean verify(String token,JSONObject reqObj) throws ExpiredDigitalSignatureException{
+	public boolean verify(String token,JSONObject reqObj) throws ExpiredDigitalSignatureException{
 		if(checkValidity())
 			throw new ExpiredDigitalSignatureException(validity);
 		try{

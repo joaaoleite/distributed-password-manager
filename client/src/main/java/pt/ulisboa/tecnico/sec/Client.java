@@ -38,16 +38,27 @@ public class Client {
 	}
 
 	public boolean savePassword(String dmain, String usrname, String passwd){
-		String domain = session.AES().encrypt(dmain);
-		String username = session.AES().encrypt(usrname);
-		String password = session.AES().encrypt(passwd);
-		return api.put(domain,username,password);
+		try{
+			String domain = session.AES().encrypt(dmain);
+			String username = session.AES().encrypt(usrname);
+			String password = session.AES().encrypt(passwd);
+			api.put(domain,username,password);
+			return true;
+		}
+		catch(Exception e){
+			return false;
+		}
 	}
 
 	public String retrievePassword(String dmain, String usrname){
-		String domain = session.AES().encrypt(dmain);
-		String username = session.AES().encrypt(usrname);
-		String password = api.get(domain,username);
-		return session.AES().decrypt(password);
+		try{
+			String domain = session.AES().encrypt(dmain);
+			String username = session.AES().encrypt(usrname);
+			String password = api.get(domain,username);
+			return session.AES().decrypt(password);
+		}
+		catch(Exception e){
+			return null;
+		}
 	}
 }

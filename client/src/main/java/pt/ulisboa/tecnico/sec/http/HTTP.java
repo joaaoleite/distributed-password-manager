@@ -30,24 +30,28 @@ public class HTTP {
 	}
 
 	// POST
-	public JSONObject post(String url, JSONObject json) throws RepetedNounceException{
-		json.put(nounces.generate());
+	public JSONObject post(String url, JSONObject json) throws UnirestException, RepetedNounceException{
+		json.put("nounce",nounces.generate());
 		String body = json.toString();
 		HttpResponse<JsonNode> request = Unirest.post(url)
 			.header("accept", "application/json")
 			.body(body)
 			.asJson();
 
+		JSONObject response = request.getBody().getObject();
+
 		// Verify Nounce
 		String nounce = response.getString("nounce");
 		if(!nounces.verify(nounce))
 			throw new RepetedNounceException(nounce);
 
-		return request.getBody().getObject().remove("nounce");
+		JSONObject res = request.getBody().getObject();
+		res.remove("nounce");
+		return res;
 	}
-	public JSONObject signedPost(String url, JSONObject json) throws DigitalSignatureErrorException, RepetedNounceException {
+	public JSONObject signedPost(String url, JSONObject json) throws UnirestException, ExpiredDigitalSignatureException, DigitalSignatureErrorException, RepetedNounceException {
 
-		json.put(nounces.generate());
+		json.put("nounce",nounces.generate());
 
 		String reqToken = signature.sign(json);
 		String body = json.toString();
@@ -65,12 +69,14 @@ public class HTTP {
 		if(!nounces.verify(nounce))
 			throw new RepetedNounceException(nounce);
 
-		// Verify Digital Signature
-		String[] parts = request.getHeaders().get("Authorization").getValue().split(" ");
-		String token = parts[parts.length-1];
+		// TODO: Verify Digital Signature
+		//String[] parts = request.getHeaders().get("Authorization").getValue().split(" ");
+		//String token = parts[parts.length-1];
+		String token = "123";
 		if(!signature.verify(token, response))
 			throw new DigitalSignatureErrorException(token);
 
-		return response.remove("nounce");
+		response.remove("nounce");
+		return response;
 	}
 }

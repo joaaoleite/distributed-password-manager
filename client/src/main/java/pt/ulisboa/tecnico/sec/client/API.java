@@ -78,7 +78,8 @@ public class API{
 			JSONObject response = http.signedPost(endpoint+"/put", params);
 			String password = response.getString("password");
 			if(password.equals("") || password==null)
-				throw new GetFailException(status);
+				throw new GetFailException();
+			return password;
 		}
 		catch(Exception e){
 			throw new GetFailException();
