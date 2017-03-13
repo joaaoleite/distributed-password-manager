@@ -12,8 +12,18 @@ import java.security.spec.X509EncodedKeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 import java.io.FileOutputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.KeyGenerator;
 
 public class Generator {
+
+  private static SecretKey generateSecretKey() throws Exception{
+    KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+    keyGen.init(128, random);
+    SecretKey key = keyGen.generateKey();
+    return key;
+  }
 
   private static KeyPair generateKeyPair() throws Exception{
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
@@ -54,12 +64,15 @@ public class Generator {
     KeyPair pair = Generator.generateKeyPair();
     PrivateKey privateKey = pair.getPrivate();
     X509Certificate[] cert = Generator.generateCertificate(pair);
+    SecretKey key = generateSecretKey();
 
     KeyStore ks = KeyStore.getInstance("JCEKS");
     ks.load(null, password);
     KeyStore.PrivateKeyEntry privEntry = new KeyStore.PrivateKeyEntry(privateKey, cert);
+    KeyStore.SecretKeyEntry secEntry = new KeyStore.SecretKeyEntry(key);
     KeyStore.PasswordProtection passwordEntry = new KeyStore.PasswordProtection(password);
-    ks.setEntry(username, privEntry, passwordEntry);
+    ks.setEntry("privateKey", privEntry, passwordEntry);
+    ks.setEntry("secretKey", secEntry, passwordEntry);
     FileOutputStream fos = new FileOutputStream("data/" + username + ".jce");
     ks.store(fos, password);
     fos.close();
