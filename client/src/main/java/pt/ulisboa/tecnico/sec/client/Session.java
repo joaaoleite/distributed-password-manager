@@ -7,6 +7,7 @@ import java.security.cert.Certificate;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import javax.crypto.SecretKey;
+import java.security.KeyPair;
 
 import pt.ulisboa.tecnico.sec.cryptography.*;
 
