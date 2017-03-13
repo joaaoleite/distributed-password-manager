@@ -10,39 +10,52 @@ import java.security.Key;
 import io.jsonwebtoken.impl.TextCodec;
 import javax.crypto.KeyGenerator;
 import org.json.JSONObject;
+import java.util.Date;
+import sun.nio.cs.ext.PCK;
 
 /** Generate a Message Authentication Code */
-public class MacCode {
+public class DigitalSignature {
 
 	/*  Key key = generate();
 	JSONObject resObj = new JSONObject();
 	resObj.put("sexo","sdlals");
 	resObj.put("cona","mmkmkm");
-	String jwtStr=makeMAC(key,resObj);
+	String token=makeMAC(key,resObj);
 	JSONObject reqObj = new JSONObject();
 	reqObj.put("sexo","sdlals");
 	reqObj.put("cona","mmkmkm");
-	verifyMAC(jwtStr, key,reqObj);*/
-	public static Key generate() throws Exception {
+	verifyMAC(token, key,reqObj);*/
+	private Key key;
+	private Date validity;
+
+	public DigitalSignature() throws Exception {
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
 		keyGen.init(256); // for example
-		return keyGen.generateKey();
+		this.key = keyGen.generateKey();
+		this.validity = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30));
 	}
 
-	private static String makeMAC(Key key, JSONObject resObj){
+	public boolean checkValidity(){
+		return validity.after(new Date());
+	}
+
+	private String assign(JSONObject resObj) throws DigitalSignatureExpiredException{
+		if(!checkValidity())
+			throw new DigitalSignatureExpiredException(validity);
 		JwtBuilder builder = Jwts.builder();
 		for(int i = 0; i<resObj.names().length(); i++){
 			builder.claim(resObj.names().getString(i), resObj.get(resObj.names().getString(i)).toString());
 		}
-		String jwtStr = builder
+		String token = builder
 		.signWith( SignatureAlgorithm.HS512,key)
 		.compact();
-		System.out.println(jwtStr);
-		return jwtStr;
-
+		System.out.println(token);
+		return token;
 	}
 
-	private static boolean verifyMAC(String jwtStr,Key key,JSONObject reqObj){
+	private boolean verify(String token,JSONObject reqObj) throws DigitalSignatureExpiredException{
+		if(!checkValidity())
+			throw new DigitalSignatureExpiredException(validity);
 		try{
 			JwtParser parser=Jwts.parser();
 			for(int i = 0; i<reqObj.names().length(); i++){
@@ -50,18 +63,14 @@ public class MacCode {
 			}
 			Jws<Claims> claims = parser
 			.setSigningKey(key)
-			.parseClaimsJws(jwtStr);
+			.parseClaimsJws(token);
 			return true;
 		} catch (MissingClaimException e) {
-			System.out.println("Missing Claim");
+			System.out.println("Missing key");
 			return false;
 		} catch (IncorrectClaimException e ) {
-			System.out.println("Incorrect Claim");
+			System.out.println("Incorrect value");
 			return false;
 		}
 	}
-
-
-
-
 }
