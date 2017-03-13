@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.sec.security.exceptions;
 
+import java.util.logging.Logger;
+
 import java.util.Date;
 
 public class ExpiredDigitalSignatureException extends Exception{

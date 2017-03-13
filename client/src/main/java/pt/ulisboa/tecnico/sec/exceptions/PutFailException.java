@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.sec.security.exceptions;
 
+import java.util.logging.Logger;
+
 public class PutFailException extends Exception{
 	private static final Logger log = Logger.getLogger(PutFailException.class.getName());
 
