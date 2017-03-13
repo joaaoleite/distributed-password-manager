@@ -3,10 +3,10 @@ package pt.ulisboa.tecnico.sec;
 
 public class Client {
 
-	private KeyStore keyStore;
+	private Session session;
 
-	public Client(KeyStore keyStore, String address, int port){
-		this.keyStore = keyStore;
+	public Client(Session session, String address, int port){
+		this.session = session;
 	}
 
 	public void register(){
@@ -14,7 +14,7 @@ public class Client {
 	}
 
 	public void savePassword(String domain, String username, String password){
-	
+
 	}
 
 	public String retrievePassword(String domain, String username){
