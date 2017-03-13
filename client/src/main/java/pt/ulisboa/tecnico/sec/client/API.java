@@ -2,9 +2,12 @@ package pt.ulisboa.tecnico.sec.client;
 
 import java.security.PublicKey;
 import java.util.Base64;
+import org.json.JSONObject;
 
-import pt.ulisboa.tecnico.sec.security.Nounces;
-import pt.ulisboa.tecnico.sec.security.DigitalSignature;
+import pt.ulisboa.tecnico.sec.http.Nounces;
+import pt.ulisboa.tecnico.sec.http.DigitalSignature;
+
+import pt.ulisboa.tecnico.sec.exceptions.*;
 
 public class API{
 

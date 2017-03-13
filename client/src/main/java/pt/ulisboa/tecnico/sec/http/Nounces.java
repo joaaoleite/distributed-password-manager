@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.sec.http;
 import java.util.Base64;
 import java.util.ArrayList;
 import java.security.PublicKey;
+import java.nio.Buffer.ByteBuffer;
 
 public class Nounces extends ArrayList<String> {
 
@@ -22,7 +23,7 @@ public class Nounces extends ArrayList<String> {
 		long epoch = Instant.now().toEpochMilli();
     	ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
     	buffer.putLong(epoch);
-    	epochBytes = buffer.array();
+    	byte[] epochBytes = buffer.array();
 
 		byte[] nounce = new byte[2 * keyBytes.length];
     	for(int i = 0; i < keyBytes.length; i++){

@@ -1,9 +1,8 @@
 package pt.ulisboa.tecnico.sec.http;
 
-import static javax.xml.bind.DatatypeConverter.printHexBinary;
-
 import io.jsonwebtoken.*;
-
+import java.util.Base64;
+import java.security.SecureRandom;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
 import io.jsonwebtoken.impl.TextCodec;
