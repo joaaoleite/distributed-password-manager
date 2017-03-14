@@ -10,7 +10,7 @@ import java.util.Base64;
 public class AES {
 
 	private SecretKey secretKey;
-	private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+	private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5");
 
 	public AES(SecretKey secretKey) throws Exception{
 		this.secretKey = secretKey;
