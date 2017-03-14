@@ -154,9 +154,10 @@ public class SecurityHandler
           if(mac.verify(token,reqObj)){
             nounces.add(nounce);
 
-            String status=api.get(pubKey,domain,username);
-            if(!status.equals("Error")){
+            String res=api.get(pubKey,domain,username);
+            if(!res.equals("Error")){
               resObj.put("nounce",nounceJSON);
+              resObj.put("password",res);
               resObj.put("status","ok");
               token=mac.sign(resObj);
               HttpResponse result= new HttpResponse(token,resObj);
