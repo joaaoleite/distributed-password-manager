@@ -40,18 +40,16 @@ public class RSA {
 
 	public String encrypt(String plainText) throws Exception{
 		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-		byte[] textInBytes = Base64.getDecoder().decode(plainText);
+		byte[] textInBytes = plainText.getBytes("UTF-8");
 		byte[] cipheredBytes = cipher.doFinal(textInBytes);
-		String cipheredText = Base64.getEncoder().encodeToString(cipheredBytes);
-		return cipheredText;
+		return Base64.getEncoder().encodeToString(cipheredBytes);
 	}
 
 	public String decrypt(String cipheredText) throws Exception{
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText);
 		byte[] textInBytes = cipher.doFinal(cipheredBytes);
-		String plainText = Base64.getEncoder().encodeToString(textInBytes);
-		return plainText;
+		return new String(textInBytes, "UTF-8");
 	}
 
 	public static KeyPair generateKeys() throws Exception{
