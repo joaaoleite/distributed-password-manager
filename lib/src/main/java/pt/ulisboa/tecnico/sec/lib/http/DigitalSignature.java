@@ -42,7 +42,7 @@ public class DigitalSignature {
 	}
 
 	public boolean checkValidity(){
-		return validity.after(new Date());
+		return validity!=null?validity.after(new Date()):false;
 	}
 
 	public String sign(JSONObject resObj) throws ExpiredDigitalSignatureException{
@@ -55,7 +55,6 @@ public class DigitalSignature {
 		String token = builder
 		.signWith( SignatureAlgorithm.HS512, key)
 		.compact();
-		System.out.println(token);
 		return token;
 	}
 

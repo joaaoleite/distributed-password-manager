@@ -28,6 +28,7 @@ public class SecurityHandler
       String id= generateRandom();
 
       unconfirm.put(id,mac);
+	  System.out.println("REGISTER MAC: "+unconfirm.get(id).getKey());
       nounces.add(nounce);
       Nounces nounceCLASS = new Nounces(pubKey);
       String  nounceJSON= nounceCLASS.generate();
@@ -52,13 +53,18 @@ public class SecurityHandler
     String nounce =reqObj.get("nounce").toString();
     String pubKey =reqObj.get("publicKey").toString();
     String id =reqObj.get("id").toString();
+	System.out.println("CONFIRM ID:"+id);
     JSONObject resObj= new JSONObject();
     Nounces nounceCLASS = new Nounces(pubKey);
-    System.out.println("nounce");
     String  nounceJSON= nounceCLASS.generate();
 
     if(!nounces.contains(nounce)){
       DigitalSignature mac = unconfirm.get(id);
+	  System.out.println("CONFIRM HAS SIZE:"+unconfirm.size());
+	  for ( String key : unconfirm.keySet() ) {
+    		System.out.println( key );
+	  }
+	  System.out.println("CONFIRM MAC: "+unconfirm.get(id));
       if(mac!=null){
 
         if(mac.verify(token,reqObj)){
@@ -72,10 +78,14 @@ public class SecurityHandler
 
           token=mac.sign(resObj);
           HttpResponse result= new HttpResponse(token,resObj);
+		  System.out.println("CONFIRM OK");
           return result;
         }
+		System.out.println("CONFIRM MAC ERROR");
       }
+	  System.out.println("CONFIRM ID ERROR!");
     }
+	System.out.println("ERROR: "+nounceJSON);
     resObj.put("nounce",nounceJSON);
     resObj.put("status","error");
     HttpResponse result= new HttpResponse("",resObj);
@@ -166,7 +176,7 @@ public class SecurityHandler
 
   private String generateRandom(){
     SecureRandom ranGen = new SecureRandom();
-    byte[] arr = new byte[16];
+    byte[] arr = new byte[128];
     ranGen.nextBytes(arr);
     return Base64.getEncoder().encodeToString(arr);
   }

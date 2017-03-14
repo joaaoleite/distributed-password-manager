@@ -38,7 +38,7 @@ public class Routes
         response.type("application/json");
         System.out.println(request.body().toString());
         JSONObject reqObj = new JSONObject(request.body().toString());
-        System.out.println("HTTP POST /register");
+        System.out.println("HTTP POST /confirm");
         String token = request.headers("Authorization").split("Bearer ")[1];
         HttpResponse resp =security.confirm(token,reqObj); //call security function
         if (resp.getToken().equals(""))
@@ -47,13 +47,14 @@ public class Routes
         return resp.getJSON().toString();
       }
       catch(Exception e){
+		  System.out.println(e);
         JSONObject resObj= new JSONObject();
         resObj.put("status","error");
         return resObj;
       }
 
     });
-    put("/put", (request, response) -> {
+    post("/put", (request, response) -> {
       //curl -X PUT -s -D - -d "{"nounce":"12346",'publicKey':'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlqs1p0CgN0AxoY2s/99yaohsDbQViDVXbujBbTPeS0rOYo0hBlHPKEvcdlY8ztuX8KFnQRt4HzHXhsSEBZ86DJTNt/MMoSM9FWM5tCRTG9YOH8LYjC4RU4dlvI8uqMNAWOTCzyx+b84TSZDNLoBWA0GgsefRpMFBMmNR2PmXe7OZQHroJd1toPfJ/rnmArKRhQbUUA36qIVgr1rB31kM4igl0Vuy5urxmqVcQ1fEQb4sYh3ssFgeayD4vBNW48RqWMWyC1+ZxLTMditGUsqzhh6keSoB+AZiDnMKl/lT6J9jWkUL5bjp1fDSGM4gml0l1HkCM+wXm+azNtC4+1OV+QIDAQAB','domain':'facebook.com','username':'bytes','password':'1237493'}" http://localhost:8080/put
       try {
         response.type("application/json");

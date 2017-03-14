@@ -28,10 +28,12 @@ public class Client {
 				String[] response = api.register();
 				String key = session.RSA().decrypt(response[0]);
 				String id = response[1];
-				api.confirm(id);
 				api.enableDigitalSignature(key);
+				api.confirm(id);
+				return true;
 			}
 			catch(Exception e){
+				System.out.println(e);
 				System.out.println("Error on register! Trying again...");
 			}
 		}
@@ -46,6 +48,7 @@ public class Client {
 			return true;
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -58,6 +61,7 @@ public class Client {
 			return session.AES().decrypt(password);
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			return null;
 		}
 	}

@@ -36,7 +36,6 @@ public class HTTP {
 	public JSONObject post(String url, JSONObject json) throws UnirestException, RepetedNounceException{
 		json.put("nounce",nounces.generate());
 		String body = json.toString();
-		System.out.println("==========\nREQUEST FROM CLIENT: \n"+body+"\n==========");
 		HttpResponse<JsonNode> request = Unirest.post(url)
 			.header("accept", "application/json")
 			.body(body)
@@ -50,7 +49,6 @@ public class HTTP {
 			throw new RepetedNounceException(nounce);
 
 		JSONObject res = request.getBody().getObject();
-		System.out.println("==========\nRESPONSE FROM SERVER: \n"+res+"\n==========");
 		res.remove("nounce");
 		return res;
 	}
@@ -60,6 +58,8 @@ public class HTTP {
 
 		String reqToken = signature.sign(json);
 		String body = json.toString();
+
+		System.out.println("BODY: "+body);
 
 		HttpResponse<JsonNode> request = Unirest.post(url)
 			.header("accept", "application/json")
@@ -74,8 +74,7 @@ public class HTTP {
 		if(!nounces.verify(nounce))
 			throw new RepetedNounceException(nounce);
 
-		String[] parts = request.getHeaders().get("Authorization").split("Bearer ");
-		String token = parts[1];
+		String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
 		if(!signature.verify(token, response))
 			throw new DigitalSignatureErrorException(token);
 
