@@ -1,8 +1,9 @@
 package pt.ulisboa.tecnico.sec;
-import pt.ulisboa.tecnico.sec.security.*;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 
 public class SecurityHandler
@@ -11,6 +12,7 @@ public class SecurityHandler
   private HashMap<String,DigitalSignature> users = new HashMap<String,DigitalSignature>();
   private HashMap<String,DigitalSignature> unconfirm = new HashMap<String,DigitalSignature>();
   private ArrayList<String> nounces=new ArrayList<String>();
+
   public HttpResponse register(JSONObject reqObj) throws Exception {
     String nounce =reqObj.get("nounce").toString();
     String pubKey =reqObj.get("publicKey").toString();
@@ -19,13 +21,19 @@ public class SecurityHandler
     if(!nounces.contains(nounce)){
 
       DigitalSignature mac =new DigitalSignature();
+      String id= generateRandom();
 
-      unconfirm.put("id",mac);
+      unconfirm.put(id,mac);
       nounces.add(nounce);
-      resObj.put("nounce","success");
-      resObj.put("key","success");
-      resObj.put("id","lmdmds");
-      String token=mac.assign(resObj);
+      Nounces nounceCLASS = new Nounces(pubKey);
+      String  nounceJSON= nounceCLASS.generate();
+      String key = mac.getKey();
+      RSA rsa =new RSA(pubKey);
+      String keyEncryt= rsa.encrypt(key);
+      resObj.put("nounce",nounceJSON);
+      resObj.put("key",keyEncryt);
+      resObj.put("id",id);
+      String token=mac.sign(resObj);
       HttpResponse result= new HttpResponse(token,resObj);
       return result;
     }
@@ -41,6 +49,9 @@ public class SecurityHandler
     String pubKey =reqObj.get("publicKey").toString();
     String id =reqObj.get("id").toString();
     JSONObject resObj= new JSONObject();
+    Nounces nounceCLASS = new Nounces(pubKey);
+    System.out.println("nounce");
+    String  nounceJSON= nounceCLASS.generate();
 
     if(!nounces.contains(nounce)){
       DigitalSignature mac = unconfirm.get(id);
@@ -51,16 +62,17 @@ public class SecurityHandler
           mac= users.get(pubKey);
           unconfirm.remove(id);
           nounces.add(nounce);
-          resObj.put("nounce","create nounce");
+
+          resObj.put("nounce",nounceJSON);
           resObj.put("status","ok");
 
-          token=mac.assign(resObj);
+          token=mac.sign(resObj);
           HttpResponse result= new HttpResponse(token,resObj);
           return result;
         }
       }
     }
-    resObj.put("nounce","number");
+    resObj.put("nounce",nounceJSON);
     resObj.put("status","error");
     HttpResponse result= new HttpResponse("",resObj);
 
@@ -73,7 +85,13 @@ public class SecurityHandler
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
     String password =reqObj.get("password").toString();
+
     JSONObject resObj= new JSONObject();
+    Nounces nounceCLASS = new Nounces(pubKey);
+    System.out.println("nounce");
+    String  nounceJSON= nounceCLASS.generate();
+    System.out.println(nounceJSON);
+
     if(users.get(pubKey)!=null){
 
       DigitalSignature mac = users.get(pubKey);
@@ -86,9 +104,9 @@ public class SecurityHandler
             String status=api.put(pubKey,domain,username,password);
 
             if(status.equals("OK")){
-              resObj.put("nounce","create nounce");
+              resObj.put("nounce",nounceJSON);
               resObj.put("status","ok");
-              token=mac.assign(resObj);
+              token=mac.sign(resObj);
               HttpResponse result= new HttpResponse(token,resObj);
               return result;
             }
@@ -96,7 +114,7 @@ public class SecurityHandler
         }
       }
     }
-    resObj.put("nounce","number");
+    resObj.put("nounce",nounceJSON);
     resObj.put("status","error");
     HttpResponse result= new HttpResponse("",resObj);
     return result;
@@ -111,6 +129,10 @@ public class SecurityHandler
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
     JSONObject resObj= new JSONObject();
+    Nounces nounceCLASS = new Nounces(pubKey);
+    System.out.println("nounce");
+    String  nounceJSON= nounceCLASS.generate();
+
     if(users.get(pubKey)!=null){
       DigitalSignature mac = users.get(pubKey);
       if(!nounces.contains(nounce)){
@@ -120,9 +142,9 @@ public class SecurityHandler
 
             String status=api.get(pubKey,domain,username);
             if(!status.equals("Error")){
-              resObj.put("nounce","create nounce");
+              resObj.put("nounce",nounceJSON);
               resObj.put("status","ok");
-              token=mac.assign(resObj);
+              token=mac.sign(resObj);
               HttpResponse result= new HttpResponse(token,resObj);
               return result;
             }
@@ -131,10 +153,18 @@ public class SecurityHandler
       }
 
     }
-    resObj.put("nounce","number");
+    resObj.put("nounce",nounceJSON);
     resObj.put("status","error");
     HttpResponse result= new HttpResponse("",resObj);
     return result;
+  }
+
+
+  private String generateRandom(){
+    SecureRandom ranGen = new SecureRandom();
+    byte[] arr = new byte[16];
+    ranGen.nextBytes(arr);
+    return Base64.getEncoder().encodeToString(arr);
   }
 
 
