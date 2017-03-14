@@ -11,32 +11,23 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.io.File;
+import javax.crypto.SecretKey;
 
 public class KeyStoreTest extends TestCase
 {
-    private String username;
-    private String password;
-
-    protected void setUp() throws Exception{
-      username = "user";
-      password = "test123";
-      Generator.generateStore(username, password);
-    }
-
-    private void cleanUp(){
-      File store = new File("data/" + username + ".jce");
-      store.delete();
-    }
-
     public void test() throws Exception{
-      FileInputStream fis = new FileInputStream("data/" + username + ".jce");
+      String username = "user";
+      String password = "test123";
+      Generator.generateStore(username, password);
+      File store = new File("data/" + username + ".jce");
+      FileInputStream fis = new FileInputStream(store);
       KeyStore ksa = KeyStore.getInstance("JCEKS");
       ksa.load(fis, password.toCharArray());
       fis.close();
       PrivateKey k = (PrivateKey) ksa.getKey("privateKey", password.toCharArray());
-      Certificate[] c = ksa.getCertificateChain("secretKey");
-      System.out.println(k);
-      System.out.println(c[0]);
-      cleanUp();
+      Certificate c = ksa.getCertificate("privateKey");
+      PublicKey p = c.getPublicKey();
+      SecretKey s = (SecretKey) ksa.getKey("secretKey", password.toCharArray());
+      store.delete();
     }
 }
