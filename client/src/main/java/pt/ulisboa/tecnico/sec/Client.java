@@ -15,8 +15,8 @@ public class Client {
 		this.api = new API(address, port, session.getPublicKey());
 		this.session = session;
 
-		//Key macKey = session.getMacKey();
-		//if(macKey!=null) api.enableDigitalSignature(key);
+		Key macKey = session.getMacKey();
+		if(macKey!=null) this.api.enableDigitalSignature(macKey);
 	}
 
 	public boolean register(){
@@ -33,6 +33,7 @@ public class Client {
 				String id = response[1];
 				api.enableDigitalSignature(key);
 				api.confirm(id);
+				session.saveMacKey(key);
 				return true;
 			}
 			catch(Exception e){

@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.sec.client;
 import java.security.PublicKey;
 import java.util.Base64;
 import org.json.JSONObject;
+import java.security.Key;
 
 import pt.ulisboa.tecnico.sec.lib.http.*;
 
@@ -21,6 +22,9 @@ public class API{
 	}
 	public void enableDigitalSignature(String key){
 		http.sign(key);
+	}
+	public void enableDigitalSignature(Key key){
+		http.sign(Base64.getEncoder().encodeToString(key.getEncoded()));
 	}
 
 	public String[] register() throws RegisterFailException{
