@@ -58,6 +58,7 @@ public class Client {
 			String domain = session.AES().encrypt(dmain);
 			String username = session.AES().encrypt(usrname);
 			String password = api.get(domain,username);
+			System.out.println("GET PASSWORD: "+password);
 			return session.AES().decrypt(password);
 		}
 		catch(Exception e){
