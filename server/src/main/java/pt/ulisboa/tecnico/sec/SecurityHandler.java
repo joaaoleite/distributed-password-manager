@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.security.SecureRandom;
 import java.util.Base64;
+import pt.ulisboa.tecnico.sec.lib.http.*;
+import pt.ulisboa.tecnico.sec.lib.crypto.*;
+import pt.ulisboa.tecnico.sec.lib.exceptions.*;
+
 
 
 public class SecurityHandler

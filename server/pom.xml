@@ -8,6 +8,13 @@
   <name>server</name>
   <url>http://maven.apache.org</url>
   <dependencies>
+    <!-- sec lib -->
+    <dependency>
+      <groupId>pt.ulisboa.tecnico.sec</groupId>
+      <artifactId>lib</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <!-- sec lib -->
     <dependency>
       <groupId>org.slf4j</groupId> <!-- erro no logg -->
       <artifactId>slf4j-nop</artifactId>
