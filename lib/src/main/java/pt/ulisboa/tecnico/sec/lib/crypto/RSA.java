@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec.cryptography;
+package pt.ulisboa.tecnico.sec.lib.crypto;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -7,6 +7,8 @@ import java.security.PublicKey;
 import javax.crypto.Cipher;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.security.KeyFactory;
+import java.security.spec.X509EncodedKeySpec;
 
 public class RSA {
 
@@ -26,6 +28,14 @@ public class RSA {
 	public RSA(KeyPair keys) throws Exception {
 		this.publicKey = keys.getPublic();
 		this.privateKey = keys.getPrivate();
+	}
+
+	public RSA(String pubKeyString) throws Exception {
+		byte[] publicBytes = Base64.getDecoder().decode(pubKeyString);
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		PublicKey pubKey = keyFactory.generatePublic(keySpec);
+		this.publicKey = pubKey;
 	}
 
 	public String encrypt(String plainText) throws Exception{

@@ -1,10 +1,12 @@
-package pt.ulisboa.tecnico.sec.http;
+package pt.ulisboa.tecnico.sec.lib.http;
 
 import java.util.Base64;
 import java.util.ArrayList;
 import java.security.PublicKey;
 import java.nio.ByteBuffer;
 import java.time.Instant;
+
+import pt.ulisboa.tecnico.sec.lib.exceptions.*;
 
 public class Nounces extends ArrayList<String> {
 
@@ -36,7 +38,7 @@ public class Nounces extends ArrayList<String> {
 		return result;
 	}
 	public boolean verify(String nounce){
-		if(super.contains(nounce))
+		if(super.contains(nounce) || nounce==null)
 			return false;
 		super.add(nounce);
 		return true;

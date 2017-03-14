@@ -1,9 +1,12 @@
-package pt.ulisboa.tecnico.sec.http;
+package pt.ulisboa.tecnico.sec.client;
 
 import java.security.Key;
 import org.json.JSONObject;
 import com.mashape.unirest.http.*;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import pt.ulisboa.tecnico.sec.lib.http.*;
+import pt.ulisboa.tecnico.sec.lib.exceptions.*;
 
 import pt.ulisboa.tecnico.sec.exceptions.*;
 
@@ -33,6 +36,7 @@ public class HTTP {
 	public JSONObject post(String url, JSONObject json) throws UnirestException, RepetedNounceException{
 		json.put("nounce",nounces.generate());
 		String body = json.toString();
+		System.out.println("==========\nREQUEST FROM CLIENT: \n"+body+"\n==========");
 		HttpResponse<JsonNode> request = Unirest.post(url)
 			.header("accept", "application/json")
 			.body(body)
@@ -46,6 +50,7 @@ public class HTTP {
 			throw new RepetedNounceException(nounce);
 
 		JSONObject res = request.getBody().getObject();
+		System.out.println("==========\nRESPONSE FROM SERVER: \n"+res+"\n==========");
 		res.remove("nounce");
 		return res;
 	}
