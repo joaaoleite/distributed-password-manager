@@ -74,10 +74,8 @@ public class HTTP {
 		if(!nounces.verify(nounce))
 			throw new RepetedNounceException(nounce);
 
-		// TODO: Verify Digital Signature
-		//String[] parts = request.getHeaders().get("Authorization").getValue().split(" ");
-		//String token = parts[parts.length-1];
-		String token = "123";
+		String[] parts = request.getHeaders().get("Authorization").split("Bearer ");
+		String token = parts[1];
 		if(!signature.verify(token, response))
 			throw new DigitalSignatureErrorException(token);
 
