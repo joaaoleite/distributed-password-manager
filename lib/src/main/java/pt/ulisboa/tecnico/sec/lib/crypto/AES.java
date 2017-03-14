@@ -24,17 +24,17 @@ public class AES {
 
 	public String encrypt(String plainText) throws Exception{
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		byte[] textInBytes = plainText.getBytes();
+		byte[] textInBytes = plainText.getBytes("UTF8");
 		byte[] cipheredBytes = cipher.doFinal(textInBytes);
-		String cipheredText = new String(cipheredBytes);
+		String cipheredText = new String(cipheredBytes, "UTF8");
 		return cipheredText;
 	}
 
 	public String decrypt(String cipheredText) throws Exception{
 		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] cipheredBytes = cipheredText.getBytes();
+		byte[] cipheredBytes = cipheredText.getBytes("UTF8");
 		byte[] textInBytes = cipher.doFinal(cipheredBytes);
-		String plainText = new String(textInBytes);
+		String plainText = new String(textInBytes, "UTF8");
 		return plainText;
 	}
 
