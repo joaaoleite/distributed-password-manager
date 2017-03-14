@@ -6,35 +6,37 @@ import junit.framework.TestSuite;
 
 import java.util.Scanner;
 import java.security.KeyStore;
+import java.io.FileInputStream;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.io.File;
 
 public class KeyStoreTest extends TestCase
 {
-    protected String username;
-    protected String password;
+    private String username;
+    private String password;
 
-    @BeforeClass
-    protected void setUp(){
-      Scanner reader = new Scanner(System.in);
-      System.out.print("Enter username: ");
-      this.username = reader.next();
-      System.out.print("Enter password: ");
-      this.password = reader.next();
+    protected void setUp() throws Exception{
+      username = "user";
+      password = "test123";
       Generator.generateStore(username, password);
     }
 
-    @AfterClass
-    protected
+    private void cleanUp(){
+      File store = new File("data/" + username + ".jce");
+      store.delete();
+    }
 
-    @Test
     public void test() throws Exception{
       FileInputStream fis = new FileInputStream("data/" + username + ".jce");
       KeyStore ksa = KeyStore.getInstance("JCEKS");
-      ksa.load(fis, password);
+      ksa.load(fis, password.toCharArray());
       fis.close();
-      PrivateKey k = (PrivateKey) ksa.getKey(username, password.toCharArray());
-      Certificate c = ksa.getCertificate(username);
-      PublicKey pk = c.getPublicKey();
-
-
+      PrivateKey k = (PrivateKey) ksa.getKey("privateKey", password.toCharArray());
+      Certificate[] c = ksa.getCertificateChain("secretKey");
+      System.out.println(k);
+      System.out.println(c[0]);
+      cleanUp();
     }
 }
