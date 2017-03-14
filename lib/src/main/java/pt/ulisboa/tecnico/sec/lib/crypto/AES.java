@@ -10,7 +10,7 @@ import java.util.Base64;
 public class AES {
 
 	private SecretKey secretKey;
-	private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5");
+	private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 
 	public AES(SecretKey secretKey) throws Exception{
 		this.secretKey = secretKey;
@@ -24,17 +24,17 @@ public class AES {
 
 	public String encrypt(String plainText) throws Exception{
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		byte[] textInBytes = plainText.getBytes("UTF8");
+		byte[] textInBytes = Base64.getDecoder().decode(plainText.getBytes("UTF8"));
 		byte[] cipheredBytes = cipher.doFinal(textInBytes);
-		String cipheredText = new String(cipheredBytes, "UTF8");
+		String cipheredText = Base64.getEncoder().encodeToString(cipheredBytes);
 		return cipheredText;
 	}
 
 	public String decrypt(String cipheredText) throws Exception{
 		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] cipheredBytes = cipheredText.getBytes("UTF8");
+		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText.getBytes("UTF8"));
 		byte[] textInBytes = cipher.doFinal(cipheredBytes);
-		String plainText = new String(textInBytes, "UTF8");
+		String plainText = Base64.getEncoder().encodeToString(textInBytes);
 		return plainText;
 	}
 
