@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec.cryptography;
+package pt.ulisboa.tecnico.sec.lib.crypto;
 
 import javax.crypto.SecretKey;
 import javax.crypto.KeyGenerator;

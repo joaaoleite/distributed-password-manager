@@ -6,6 +6,12 @@ public class RegisterFailException extends Exception{
 	private static final Logger log = Logger.getLogger(RegisterFailException.class.getName());
 
 	public RegisterFailException(){
-		log.warning("Register failed");
+		super("REGISTER failed");
+		
+		log.warning("REGISTER failed");
+	}
+
+	public String getMessage(){
+		return "REGISTER failed";
 	}
 }

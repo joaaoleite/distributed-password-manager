@@ -4,7 +4,7 @@ import java.security.PublicKey;
 import java.util.Base64;
 import org.json.JSONObject;
 
-import pt.ulisboa.tecnico.sec.http.*;
+import pt.ulisboa.tecnico.sec.lib.http.*;
 
 import pt.ulisboa.tecnico.sec.exceptions.*;
 

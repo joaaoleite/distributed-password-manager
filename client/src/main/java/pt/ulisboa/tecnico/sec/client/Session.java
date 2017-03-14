@@ -9,7 +9,7 @@ import java.security.cert.X509Certificate;
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
 
-import pt.ulisboa.tecnico.sec.cryptography.*;
+import pt.ulisboa.tecnico.sec.lib.crypto.*;
 
 public class Session {
 	private PrivateKey privateKey;
@@ -58,12 +58,13 @@ public class Session {
 			fis.close();
 
 			privateKey = (PrivateKey) ksa.getKey("privateKey", password);
-			certificate = (X509Certificate) ksa.getCertificate(username);
+			certificate = (X509Certificate) ksa.getCertificate("privateKey");
 			certificate.checkValidity();
 			secretKey = (SecretKey) ksa.getKey("secretKey", password);
 			publicKey = certificate.getPublicKey();
 			return true;
 		}catch(Exception e){
+			e.printStackTrace(System.out);
 			return false;
 		}
 	}

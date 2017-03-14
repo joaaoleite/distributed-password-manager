@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.sec.http;
+package pt.ulisboa.tecnico.sec.lib.http;
 
 import io.jsonwebtoken.*;
 import java.util.Base64;
@@ -12,7 +12,7 @@ import java.util.Date;
 import sun.nio.cs.ext.PCK;
 import javax.crypto.spec.SecretKeySpec;
 
-import pt.ulisboa.tecnico.sec.exceptions.*;
+import pt.ulisboa.tecnico.sec.lib.exceptions.*;
 
 public class DigitalSignature {
 
