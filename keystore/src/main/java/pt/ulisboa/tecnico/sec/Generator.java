@@ -1,37 +1,29 @@
 package pt.ulisboa.tecnico.sec;
 
-import sun.security.x509.X509CertInfo;
-import java.math.BigInteger;
-import java.security.*;
-import java.security.cert.X509Certificate;
-import java.util.Date;
-import sun.security.x509.*;
+import pt.ulisboa.tecnico.sec.lib.crypto.*;
 import java.io.File;
-import java.io.FileWriter;
-import java.security.spec.X509EncodedKeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Base64;
 import java.io.FileOutputStream;
+import java.util.Date;
+import java.util.Base64;
+import java.math.BigInteger;
+import java.security.KeyPair;
 import javax.crypto.SecretKey;
-import javax.crypto.KeyGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import sun.security.x509.X509CertInfo;
+import java.security.cert.X509Certificate;
+import sun.security.x509.CertificateVersion;
+import sun.security.x509.CertificateValidity;
+import sun.security.x509.X500Name;
+import sun.security.x509.CertificateSerialNumber;
+import sun.security.x509.CertificateX509Key;
+import sun.security.x509.AlgorithmId;
+import sun.security.x509.CertificateAlgorithmId;
+import sun.security.x509.X509CertImpl;
 
 public class Generator {
-
-  private static SecretKey generateSecretKey() throws Exception{
-    KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-    keyGen.init(128, random);
-    SecretKey key = keyGen.generateKey();
-    return key;
-  }
-
-  private static KeyPair generateKeyPair() throws Exception{
-    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-    keyGen.initialize(2048, random);
-    KeyPair pair = keyGen.generateKeyPair();
-    return pair;
-  }
 
   private static X509Certificate[] generateCertificate(KeyPair pair) throws Exception {
     X509CertInfo info = new X509CertInfo();
@@ -61,10 +53,10 @@ public class Generator {
     dir.mkdirs();
     char[] password = pass.toCharArray();
 
-    KeyPair pair = Generator.generateKeyPair();
+    KeyPair pair = RSA.generateKeys();
     PrivateKey privateKey = pair.getPrivate();
-    X509Certificate[] cert = Generator.generateCertificate(pair);
-    SecretKey key = generateSecretKey();
+    X509Certificate[] cert = generateCertificate(pair);
+    SecretKey key = AES.generateKey();
 
     KeyStore ks = KeyStore.getInstance("JCEKS");
     ks.load(null, password);
