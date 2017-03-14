@@ -23,6 +23,5 @@ public class LibTest extends TestCase {
 
 		String decrypted = aes.decrypt(encrypted);
 		System.out.println("DECRYPTED: "+decrypted);
-
 	}
 }

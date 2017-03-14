@@ -6,11 +6,12 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 import java.util.Base64;
+import javax.crypto.spec.IvParameterSpec;
 
 public class AES {
 
 	private SecretKey secretKey;
-	private Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+	private Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
 	public AES(SecretKey secretKey) throws Exception{
 		this.secretKey = secretKey;
@@ -23,19 +24,19 @@ public class AES {
 	}
 
 	public String encrypt(String plainText) throws Exception{
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		byte[] textInBytes = Base64.getDecoder().decode(plainText.getBytes("UTF8"));
+		IvParameterSpec ivParameterSpec = new IvParameterSpec(secretKey.getEncoded());
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
+		byte[] textInBytes = plainText.getBytes("UTF-8");
 		byte[] cipheredBytes = cipher.doFinal(textInBytes);
-		String cipheredText = Base64.getEncoder().encodeToString(cipheredBytes);
-		return cipheredText;
+		return Base64.getEncoder().encodeToString(cipheredBytes);
 	}
 
 	public String decrypt(String cipheredText) throws Exception{
-		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText.getBytes("UTF8"));
+		IvParameterSpec ivParameterSpec = new IvParameterSpec(secretKey.getEncoded());
+		cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText);
 		byte[] textInBytes = cipher.doFinal(cipheredBytes);
-		String plainText = Base64.getEncoder().encodeToString(textInBytes);
-		return plainText;
+		return new String(textInBytes, "UTF-8");
 	}
 
 	public static SecretKey generateKey() throws Exception{
