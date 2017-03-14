@@ -64,7 +64,6 @@ public class Session {
 			publicKey = certificate.getPublicKey();
 			return true;
 		}catch(Exception e){
-			e.printStackTrace(System.out);
 			return false;
 		}
 	}

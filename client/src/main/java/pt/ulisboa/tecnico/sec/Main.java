@@ -70,7 +70,9 @@ public class Main {
 			if(option==4){
 				String domain = c.readLine("Domain: ");
 				String username = c.readLine("Username: ");
-				client.retrievePassword(domain,username);
+				String password = client.retrievePassword(domain,username);
+				if(password!=null) System.out.println("PASSWORD: "+password);
+				else System.out.println("Domain or Username does not exists!");
 			}
 			if(option==0){
 				client = null;

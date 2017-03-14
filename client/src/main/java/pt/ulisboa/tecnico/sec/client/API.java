@@ -48,7 +48,6 @@ public class API{
 				throw new ConfirmFailException(status);
 		}
 		catch(Exception e){
-			e.printStackTrace();
 			throw new ConfirmFailException();
 		}
 	}
@@ -57,20 +56,15 @@ public class API{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
-			System.out.println("PUT: domain:"+domain+"\nusername:"+username+"\npassword:"+password);
 			params.put("domain", domain);
 			params.put("username", username);
 			params.put("password", password);
-			System.out.println("======== 1");
 			JSONObject response = http.signedPost(endpoint+"/put", params);
-			System.out.println("======== 2");
 			String status = response.getString("status");
-			System.out.println("======== 3");
 			if(!status.equals("ok"))
 				throw new PutFailException(status);
 		}
 		catch(Exception e){
-			e.printStackTrace();
 			throw new PutFailException();
 		}
 	}
@@ -88,7 +82,6 @@ public class API{
 			return password;
 		}
 		catch(Exception e){
-			e.printStackTrace();
 			throw new GetFailException();
 		}
 	}

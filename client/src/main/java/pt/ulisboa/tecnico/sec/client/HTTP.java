@@ -59,8 +59,6 @@ public class HTTP {
 		String reqToken = signature.sign(json);
 		String body = json.toString();
 
-		System.out.println("BODY: "+body);
-
 		HttpResponse<JsonNode> request = Unirest.post(url)
 			.header("accept", "application/json")
 			.header("Authorization", "Bearer "+reqToken)

@@ -14,6 +14,9 @@ public class Client {
 	public Client(Session session, String address, int port){
 		this.api = new API(address, port, session.getPublicKey());
 		this.session = session;
+
+		//Key macKey = session.getMacKey();
+		//if(macKey!=null) api.enableDigitalSignature(key);
 	}
 
 	public boolean register(){
@@ -33,7 +36,6 @@ public class Client {
 				return true;
 			}
 			catch(Exception e){
-				System.out.println(e);
 				System.out.println("Error on register! Trying again...");
 			}
 		}
@@ -48,7 +50,6 @@ public class Client {
 			return true;
 		}
 		catch(Exception e){
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -58,11 +59,9 @@ public class Client {
 			String domain = session.AES().encrypt(dmain);
 			String username = session.AES().encrypt(usrname);
 			String password = api.get(domain,username);
-			System.out.println("GET PASSWORD: "+password);
 			return session.AES().decrypt(password);
 		}
 		catch(Exception e){
-			e.printStackTrace();
 			return null;
 		}
 	}
