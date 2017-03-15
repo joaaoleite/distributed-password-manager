@@ -7,8 +7,7 @@ public class SeqNumber {
   private long seq = 0;
 
   public JSONObject request(JSONObject obj){
-    this.seq++;
-    return obj.put("seq", this.seq);
+    return obj.put("seq", ++this.seq);
   }
 
   public boolean verifyOnClient(JSONObject obj){
