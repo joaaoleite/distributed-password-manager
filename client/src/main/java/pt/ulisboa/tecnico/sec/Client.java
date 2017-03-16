@@ -37,7 +37,7 @@ public class Client {
 				return true;
 			}
 			catch(Exception e){
-				System.out.println("Error on register! Trying again...");
+				System.out.println("Trying again...");
 			}
 		}
 	}

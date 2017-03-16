@@ -1,13 +1,12 @@
 package pt.ulisboa.tecnico.sec;
 
-import pt.ulisboa.tecnico.sec.lib.crypto.*;
+import pt.ulisboa.tecnico.sec.lib.crypto.RSA;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Base64;
 import java.math.BigInteger;
 import java.security.KeyPair;
-import javax.crypto.SecretKey;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.KeyStore;
@@ -56,15 +55,12 @@ public class Generator {
     KeyPair pair = RSA.generateKeys();
     PrivateKey privateKey = pair.getPrivate();
     X509Certificate[] cert = generateCertificate(pair);
-    SecretKey key = AES.generateKey();
 
     KeyStore ks = KeyStore.getInstance("JCEKS");
     ks.load(null, password);
     KeyStore.PrivateKeyEntry privEntry = new KeyStore.PrivateKeyEntry(privateKey, cert);
-    KeyStore.SecretKeyEntry secEntry = new KeyStore.SecretKeyEntry(key);
     KeyStore.PasswordProtection passwordEntry = new KeyStore.PasswordProtection(password);
     ks.setEntry("privateKey", privEntry, passwordEntry);
-    ks.setEntry("secretKey", secEntry, passwordEntry);
     FileOutputStream fos = new FileOutputStream("data/" + username + ".jce");
     ks.store(fos, password);
     fos.close();

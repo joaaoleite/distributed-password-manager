@@ -70,6 +70,9 @@ public class Session {
 			fis.close();
 
 			privateKey = (PrivateKey) ksa.getKey("privateKey", password);
+
+			try{ macKey = (Key) ksa.getKey("mac", password); } catch(Exception e){ }
+
 			certificate = (X509Certificate) ksa.getCertificate("privateKey");
 			certificate.checkValidity();
 			secretKey = (SecretKey) ksa.getKey("secretKey", password);

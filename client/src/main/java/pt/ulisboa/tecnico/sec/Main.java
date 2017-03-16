@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.sec.Client;
 
 public class Main {
 
-	private static final String COMMANDS = ">>> Available commands: \n" +
+	private static final String COMMANDS = "\n>>> Available commands: \n" +
 		"1: INIT \n" +
 		"2: REGISTER USER \n" +
 		"3: SAVE PASSWORD \n" +
@@ -37,18 +37,19 @@ public class Main {
 		while(true){
 			String command = "";
 			while(invalid(command))
-				command = c.readLine(COMMANDS+" Enter command: ");
+				command = c.readLine(COMMANDS+"Enter command: ");
 
 			int option = Integer.parseInt(command);
 
 			while(option==1){
+				System.out.println("\n===== INIT =====");
 				String username = c.readLine("Master username: ");
 				String password = c.readLine("Master password: ");
 				Session session = new Session();
 				if(session.login(username,password)){
-					client = new Client(session,address,port);
-					option = 69;
+					client = new Client(session, address, port);
 					System.out.println(">>> Login successful!");
+					break;
 				}
 				else System.out.println(">>> Login error!");
 			}
@@ -59,24 +60,38 @@ public class Main {
 			}
 
 			if(option==2){
-				client.register();
+				System.out.println("\n===== REGISTER =====");
+
+				if(client.register())
+					System.out.println(">>> User registered successful!");
+				else
+					System.out.println(">>> Register operation failed!");
 			}
 			if(option==3){
+				System.out.println("\n===== SAVE PASSWORD =====");
 				String domain = c.readLine("Domain: ");
 				String username = c.readLine("Username: ");
 				String password = c.readLine("Password: ");
-				client.savePassword(domain,username,password);
+
+				if(client.savePassword(domain,username,password))
+					System.out.println(">>> Password saved successful!");
+				else
+					System.out.println(">>> Error! Did you registered?");
 			}
 			if(option==4){
+				System.out.println("\n===== GET PASSWORD =====");
 				String domain = c.readLine("Domain: ");
 				String username = c.readLine("Username: ");
 				String password = client.retrievePassword(domain,username);
-				if(password!=null) System.out.println("PASSWORD: "+password);
-				else System.out.println("Domain or Username does not exists!");
+
+				if(password!=null)
+					System.out.println(">>> PASSWORD: "+password);
+				else
+					System.out.println(">>> Domain or Username does not exists!");
 			}
 			if(option==0){
 				client = null;
-				System.out.println("====================\nGoodbye!");
+				System.out.println("\n====================\n>>> Goodbye!");
 				System.out.println(">>> To log to another user call INIT again...");
 			}
 		}
