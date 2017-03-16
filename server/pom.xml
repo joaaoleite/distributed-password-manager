@@ -71,8 +71,8 @@
           </arguments>
         </configuration>
       </plugin>
+      <!-- lambda -->
       <plugin>
-        <!-- lambda -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
@@ -81,6 +81,7 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <!-- lambda -->
     </plugins>
   </build>
 </project>
