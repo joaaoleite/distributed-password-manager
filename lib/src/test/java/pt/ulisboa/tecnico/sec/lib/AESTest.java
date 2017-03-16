@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.sec.lib.exceptions.*;
 import java.util.Base64;
 import javax.crypto.SecretKey;
 
-public class LibTest extends TestCase {
+public class AESTest extends TestCase {
 
 	public void testAESKey() throws Exception{
 		System.out.println("---TESTING AES KEY CREATION FROM STRING---");
@@ -67,48 +67,6 @@ public class LibTest extends TestCase {
 
 		System.out.println("Decrypting...");
 		String decrypted = aes.decrypt(encrypted);
-		System.out.println("Decrypted: " + decrypted);
-
-		assertEquals(plainText, decrypted);
-		System.out.println("Success!");
-	}
-
-	public void testRSAPublicEncryption() throws Exception{
-		System.out.println("---TESTING RSA-PUBLIC ENCRYPTION---");
-
-		System.out.println("Creating RSA class with keys generated...");
-		RSA rsa = new RSA(RSA.generateKeys());
-
-		String plainText = "ThisIsAPlainTextReadyToBeEncryptedInRSAWithPublicKey";
-		System.out.println("PlainText: " + plainText);
-
-		System.out.println("Encrypting...");
-		String encrypted = rsa.encryptWithPublicKey(plainText);
-		System.out.println("Encrypted: " + encrypted);
-
-		System.out.println("Decrypting...");
-		String decrypted = rsa.decryptWithPrivateKey(encrypted);
-		System.out.println("Decrypted: " + decrypted);
-
-		assertEquals(plainText, decrypted);
-		System.out.println("Success!");
-	}
-
-	public void testRSAPrivateEncryption() throws Exception{
-		System.out.println("---TESTING RSA-PRIVATE ENCRYPTION---");
-
-		System.out.println("Creating RSA class with keys generated...");
-		RSA rsa = new RSA(RSA.generateKeys());
-
-		String plainText = "ThisIsAPlainTextReadyToBeEncryptedInRSAWithPrivateKey";
-		System.out.println("PlainText: " + plainText);
-
-		System.out.println("Encrypting...");
-		String encrypted = rsa.encryptWithPrivateKey(plainText);
-		System.out.println("Encrypted: " + encrypted);
-
-		System.out.println("Decrypting...");
-		String decrypted = rsa.decryptWithPublicKey(encrypted);
 		System.out.println("Decrypted: " + decrypted);
 
 		assertEquals(plainText, decrypted);

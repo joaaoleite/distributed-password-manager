@@ -1,81 +1,61 @@
 package pt.ulisboa.tecnico.sec.lib.http;
 
-import io.jsonwebtoken.*;
-import java.util.Base64;
-import java.security.SecureRandom;
-import io.jsonwebtoken.impl.crypto.MacProvider;
-import java.security.Key;
-import io.jsonwebtoken.impl.TextCodec;
-import javax.crypto.KeyGenerator;
+//provides helper methods to print byte[]
+import static javax.xml.bind.DatatypeConverter.printHexBinary;
+import pt.ulisboa.tecnico.sec.lib.crypto.RSA;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Signature;
+import java.security.SignatureException;
 import org.json.JSONObject;
-import java.util.Date;
-import sun.nio.cs.ext.PCK;
-import javax.crypto.spec.SecretKeySpec;
+import java.security.SecureRandom;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Base64;
 
-import pt.ulisboa.tecnico.sec.lib.exceptions.*;
-
+/** Generate a digital signature */
 public class DigitalSignature {
+	private PublicKey publicKey  ;
+	private PrivateKey privateKey;
 
-	private Key key;
-	private Date validity;
 
-	public DigitalSignature() throws Exception {
-		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-		keyGen.init(128, random);
-		this.key = keyGen.generateKey();
-		this.validity = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30));
+	public DigitalSignature(PrivateKey privateKey) throws Exception{
+		this.privateKey = privateKey;
+	}
+	public DigitalSignature(PrivateKey privateKey, String publicKey) throws Exception{
+		this.privateKey = privateKey;
+		this.publicKey = RSA.stringToPublicKey(publicKey);
+	}
+	public void setPublicKey(String publicKey) throws Exception{
+		this.publicKey = RSA.stringToPublicKey(publicKey);
+	}
+	public void setPublicKey(PublicKey publicKey) throws Exception{
+		this.publicKey = publicKey;
 	}
 
-	public DigitalSignature(Key key) {
-		this.key = key;
-		this.validity = null;
-	}
 
-	public String getKey(){
-		return Base64.getEncoder().encodeToString(key.getEncoded());
-	}
+    public String sign(JSONObject json) throws Exception {
+				System.out.println(json.toString());
+				byte[] body = json.toString().getBytes("UTF8");
+        Signature sig = Signature.getInstance("SHA512withRSA");
+        sig.initSign(privateKey);
+        sig.update(body);
+        byte[] signature = sig.sign();
 
-	public DigitalSignature(String key) {
-		byte[] keyBytes = Base64.getDecoder().decode(key);
-		this.key = new SecretKeySpec(keyBytes, "AES");
-	}
+        return Base64.getEncoder().encodeToString(signature);
+    }
 
-	public boolean checkValidity(){
-		return validity!=null?validity.after(new Date()):false;
-	}
+    public boolean verify(String token,JSONObject json) throws Exception {
+				byte[] body = json.toString().getBytes("UTF8");
+				byte[] cipherDigest = Base64.getDecoder().decode(token);
+        Signature sig = Signature.getInstance("SHA512withRSA");
+        sig.initVerify(publicKey);
+        sig.update(body);
+        try {
+            return sig.verify(cipherDigest);
+        } catch (SignatureException se) {
+            return false;
+        }
+    }
 
-	public String sign(JSONObject resObj) throws ExpiredDigitalSignatureException{
-		if(checkValidity())
-			throw new ExpiredDigitalSignatureException(validity);
-		JwtBuilder builder = Jwts.builder();
-		for(int i = 0; i<resObj.names().length(); i++){
-			builder.claim(resObj.names().getString(i), resObj.get(resObj.names().getString(i)).toString());
-		}
-		String token = builder
-		.signWith( SignatureAlgorithm.HS512, key)
-		.compact();
-		return token;
-	}
-
-	public boolean verify(String token,JSONObject reqObj) throws ExpiredDigitalSignatureException{
-		if(checkValidity())
-			throw new ExpiredDigitalSignatureException(validity);
-		try{
-			JwtParser parser=Jwts.parser();
-			for(int i = 0; i<reqObj.names().length(); i++){
-				parser.require(reqObj.names().getString(i), reqObj.get(reqObj.names().getString(i)).toString());
-			}
-			Jws<Claims> claims = parser
-			.setSigningKey(key)
-			.parseClaimsJws(token);
-			return true;
-		} catch (MissingClaimException e) {
-			System.out.println("Missing key");
-			return false;
-		} catch (IncorrectClaimException e ) {
-			System.out.println("Incorrect value");
-			return false;
-		}
-	}
 }
