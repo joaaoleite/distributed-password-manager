@@ -90,7 +90,7 @@ public class SecurityHandler
     return new HttpResponse(token,resObj);
   }
 
-  public HttpResponse put(String token, JSONObject reqObj) throws Exception {
+  public synchronized HttpResponse put(String token, JSONObject reqObj) throws Exception {
     String clientPubKey =reqObj.get("publicKey").toString();
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
