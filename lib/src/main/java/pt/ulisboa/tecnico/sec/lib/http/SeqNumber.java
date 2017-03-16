@@ -11,6 +11,10 @@ public class SeqNumber {
     this.isServer = 0;
     this.seq = json.getLong("seq");
   }
+  public SeqNumber(long seq) throws Exception{
+    this.isServer = 0;
+    this.seq = seq;
+  }
   public SeqNumber(){
     this.isServer = 1;
     this.seq = 0;

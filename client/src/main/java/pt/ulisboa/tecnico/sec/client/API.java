@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import java.security.Key;
 
 import pt.ulisboa.tecnico.sec.lib.http.*;
+import pt.ulisboa.tecnico.sec.lib.crypto.RSA;
 
 import pt.ulisboa.tecnico.sec.exceptions.*;
 
@@ -14,16 +15,12 @@ public class API{
 	private HTTP http;
 	private String publicKey;
 
-	public API(String address, int port, PublicKey key){
+	public API(String address, int port){
 		this.endpoint = "http://" + address + ":" + port;
-		this.publicKey = RSA.publicKeyToString(key);
-		this.http = new HTTP(new Nounces(key));
-	}
-	public void enableDigitalSignature(String key){
-		http.sign(key);
-	}
-	public void enableDigitalSignature(Key key){
-		http.sign(RSA.publicKeyToString(key));
+		try{
+			this.publicKey = RSA.publicKeyToString(Session.getInstance().getPublicKey());
+		}catch(Exception e){ }
+		this.http = new HTTP();
 	}
 
 	public String[] register() throws RegisterFailException{
@@ -31,9 +28,23 @@ public class API{
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
 			JSONObject response = http.post(endpoint+"/register", params);
-			String key = response.getString("key");
-			String id = response.getString("id");
-			return new String[] {key, id};
+			String seqNumber = response.getString("seq");
+			String serverPublicKey = response.getString("publicKey");
+			return new String[]{seqNumber, serverPublicKey};
+		}
+		catch(Exception e){
+			throw new RegisterFailException();
+		}
+	}
+
+	public String[] init() throws RegisterFailException{
+		try {
+			JSONObject params = new JSONObject();
+			params.put("publicKey", publicKey);
+			JSONObject response = http.post(endpoint+"/init", params);
+			String seqNumber = response.getString("seq");
+			String serverPublicKey = response.getString("publicKey");
+			return new String[]{seqNumber, serverPublicKey};
 		}
 		catch(Exception e){
 			throw new RegisterFailException();
@@ -45,7 +56,7 @@ public class API{
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
 			params.put("id", id);
-			JSONObject response = http.signedPost(endpoint+"/confirm", params);
+			JSONObject response = http.post(endpoint+"/confirm", params);
 			String status = response.getString("status");
 			if(!status.equals("ok"))
 				throw new ConfirmFailException(status);
@@ -62,7 +73,7 @@ public class API{
 			params.put("domain", domain);
 			params.put("username", username);
 			params.put("password", password);
-			JSONObject response = http.signedPost(endpoint+"/put", params);
+			JSONObject response = http.post(endpoint+"/put", params);
 			String status = response.getString("status");
 			if(!status.equals("ok"))
 				throw new PutFailException(status);
@@ -78,7 +89,7 @@ public class API{
 			params.put("publicKey", publicKey);
 			params.put("domain", domain);
 			params.put("username", username);
-			JSONObject response = http.signedPost(endpoint+"/get", params);
+			JSONObject response = http.post(endpoint+"/get", params);
 			String password = response.getString("password");
 			if(password.equals("") || password==null)
 				throw new GetFailException();

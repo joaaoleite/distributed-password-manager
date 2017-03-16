@@ -26,6 +26,10 @@ public class DigitalSignature {
 		this.privateKey = privateKey;
 		this.publicKey = RSA.stringToPublicKey(publicKey);
 	}
+	public DigitalSignature(PrivateKey privateKey, PublicKey publicKey) throws Exception{
+		this.privateKey = privateKey;
+		this.publicKey = publicKey;
+	}
 	public void setPublicKey(String publicKey) throws Exception{
 		this.publicKey = RSA.stringToPublicKey(publicKey);
 	}

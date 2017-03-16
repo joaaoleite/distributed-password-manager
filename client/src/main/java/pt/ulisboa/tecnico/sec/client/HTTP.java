@@ -12,51 +12,19 @@ import pt.ulisboa.tecnico.sec.exceptions.*;
 
 public class HTTP {
 
-	private Nounces nounces;
-	private DigitalSignature signature;
+	private Session session = Session.getInstance();
 
-	// Constructor
-	public HTTP(Nounces nounces, DigitalSignature signature){
-		this.signature = signature;
-		this.nounces = nounces;
-	}
-	public HTTP(Nounces nounces){
-		this.nounces = nounces;
-	}
+	public JSONObject post(String url, JSONObject json) throws Exception {
 
-	// Signature
-	public void sign(String key) {
+		// Put Sequence Number
 		try{
-			this.signature = new DigitalSignature(key);
+			json = session.SeqNumber().request(json);
 		}
-		catch(Exception e){ }
-	}
+		catch(NullPointerException e){ }
 
-	// POST
-	public JSONObject post(String url, JSONObject json) throws UnirestException, RepetedNounceException{
-		json.put("nounce",nounces.generate());
-		String body = json.toString();
-		HttpResponse<JsonNode> request = Unirest.post(url)
-			.header("accept", "application/json")
-			.body(body)
-			.asJson();
+		// Put Digital Signature
+		String reqToken = session.DigitalSignature().sign(json);
 
-		JSONObject response = request.getBody().getObject();
-
-		// Verify Nounce
-		String nounce = response.getString("nounce");
-		if(!nounces.verify(nounce))
-			throw new RepetedNounceException(nounce);
-
-		JSONObject res = request.getBody().getObject();
-		res.remove("nounce");
-		return res;
-	}
-	public JSONObject signedPost(String url, JSONObject json) throws UnirestException, ExpiredDigitalSignatureException, DigitalSignatureErrorException, RepetedNounceException {
-
-		json.put("nounce",nounces.generate());
-
-		String reqToken = signature.sign(json);
 		String body = json.toString();
 
 		HttpResponse<JsonNode> request = Unirest.post(url)
@@ -67,16 +35,18 @@ public class HTTP {
 
 		JSONObject response = request.getBody().getObject();
 
-		// Verify Nounce
-		String nounce = response.getString("nounce");
-		if(!nounces.verify(nounce))
-			throw new RepetedNounceException(nounce);
-
+		// Verify Digital Signature
 		String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
-		if(!signature.verify(token, response))
+		if(!session.DigitalSignature().verify(token, response))
 			throw new DigitalSignatureErrorException(token);
 
-		response.remove("nounce");
+		// Verify Sequence Number
+		try{
+			if(!session.SeqNumber().verify(json))
+				throw new RepetedNounceException(token);
+		}
+		catch(NullPointerException e){ }
+
 		return response;
 	}
 }

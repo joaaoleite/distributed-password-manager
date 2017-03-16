@@ -5,6 +5,8 @@ import java.io.Console;
 import pt.ulisboa.tecnico.sec.client.Session;
 import pt.ulisboa.tecnico.sec.Client;
 
+import java.util.logging.*;
+
 public class Main {
 
 	private static final String COMMANDS = "\n>>> Available commands: \n" +
@@ -45,7 +47,7 @@ public class Main {
 				System.out.println("\n===== INIT =====");
 				String username = c.readLine("Master username: ");
 				String password = c.readLine("Master password: ");
-				Session session = new Session();
+				Session session = Session.newInstance();
 				if(session.login(username,password)){
 					client = new Client(session, address, port);
 					System.out.println(">>> Login successful!");
@@ -65,7 +67,7 @@ public class Main {
 				if(client.register())
 					System.out.println(">>> User registered successful!");
 				else
-					System.out.println(">>> Register operation failed!");
+					System.out.println(">>> Register failed! Already registered?");
 			}
 			if(option==3){
 				System.out.println("\n===== SAVE PASSWORD =====");

@@ -14,16 +14,23 @@ import java.security.KeyPair;
 import java.util.Base64;
 
 import pt.ulisboa.tecnico.sec.lib.crypto.*;
+import pt.ulisboa.tecnico.sec.lib.http.*;
 
 public class Session {
+
+	private static Session session;
+
 	private PrivateKey privateKey;
 	private PublicKey publicKey;
 	private SecretKey secretKey;
 	private X509Certificate certificate;
+	private PublicKey serverPublicKey;
 	private KeyStore ksa;
 	private char[] password;
 	private String username;
-	private Key macKey;
+
+	private DigitalSignature signature;
+	private SeqNumber seq;
 
 	public PrivateKey getPrivateKey(){
 		return privateKey;
@@ -37,8 +44,10 @@ public class Session {
 	public Certificate getCertificate(){
 		return certificate;
 	}
-	public Key getMacKey(){
-		return macKey;
+	public PublicKey setServerPublicKey(PublicKey serverPublicKey) throws Exception{
+		this.serverPublicKey = serverPublicKey;
+		this.signature = new DigitalSignature(privateKey, serverPublicKey);
+		return serverPublicKey;
 	}
 
 	public AES AES(){
@@ -57,6 +66,35 @@ public class Session {
 			return null;
 		}
 	}
+	public RSANoPadding RSANoPadding(){
+		try{
+			return new RSANoPadding(publicKey, privateKey);
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	public DigitalSignature DigitalSignature(){
+		try{
+			if(signature == null)
+				return new DigitalSignature(privateKey);
+			else
+				return this.signature;
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	public void DigitalSignature(String serverPublicKey) throws Exception{
+		this.serverPublicKey = RSA.stringToPublicKey(serverPublicKey);
+		this.signature = new DigitalSignature(privateKey,this.serverPublicKey);
+	}
+	public SeqNumber SeqNumber(){
+		return seq;
+	}
+	public void SeqNumber(String seq) throws Exception{
+		this.seq = new SeqNumber(Long.parseLong(seq));
+	}
 
 	public boolean login(String usrname, String passwd){
 		try{
@@ -71,8 +109,6 @@ public class Session {
 
 			privateKey = (PrivateKey) ksa.getKey("privateKey", password);
 
-			try{ macKey = (Key) ksa.getKey("mac", password); } catch(Exception e){ }
-
 			certificate = (X509Certificate) ksa.getCertificate("privateKey");
 			certificate.checkValidity();
 			secretKey = (SecretKey) ksa.getKey("secretKey", password);
@@ -82,21 +118,13 @@ public class Session {
 			return false;
 		}
 	}
-
-	public void saveMacKey(String stringKey){
-		try{
-			byte[] keyBytes = Base64.getDecoder().decode(stringKey);
-			Key key = new SecretKeySpec(keyBytes, "AES");
-			KeyStore.SecretKeyEntry keyEntry = new KeyStore.SecretKeyEntry((SecretKey)key);
-			KeyStore.PasswordProtection passEntry = new KeyStore.PasswordProtection(password);
-			ksa.setEntry("mac", keyEntry, passEntry);
-
-			FileOutputStream fos = new FileOutputStream("../keystore/data/" + username + ".jce");
-			ksa.store(fos, password);
-			fos.close();
-			this.macKey = key;
-		}catch(Exception e){
-			return;
-		}
+	public static Session newInstance(){
+		session = new Session();
+		return session;
+	}
+	public static Session getInstance(){
+		if(session == null)
+			session = new Session();
+		return session;
 	}
 }
