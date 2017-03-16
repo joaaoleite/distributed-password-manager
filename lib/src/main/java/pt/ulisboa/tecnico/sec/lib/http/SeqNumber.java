@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.sec.lib.http;
 import org.json.JSONObject;
 
 public class SeqNumber {
+
   private long seq;
   private int isServer;
 
