@@ -7,180 +7,151 @@ import java.util.Base64;
 import pt.ulisboa.tecnico.sec.lib.http.*;
 import pt.ulisboa.tecnico.sec.lib.crypto.*;
 import pt.ulisboa.tecnico.sec.lib.exceptions.*;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.io.FileInputStream;
+import java.security.cert.X509Certificate;
 
 
 
 public class SecurityHandler
 {
-  private Api api = new Api();
-  private HashMap<String,DigitalSignature> users = new HashMap<String,DigitalSignature>();
-  private HashMap<String,DigitalSignature> unconfirm = new HashMap<String,DigitalSignature>();
-  private ArrayList<String> nounces=new ArrayList<String>();
 
-  public HttpResponse register(JSONObject reqObj) throws Exception {
-    String nounce =reqObj.get("nounce").toString();
-    String pubKey =reqObj.get("publicKey").toString();
-    JSONObject resObj= new JSONObject();
+  private PrivateKey privateKey;
+  private PublicKey publicKey;
+  private HashMap<String,User> users = new HashMap<String,User>();
 
-    if(!nounces.contains(nounce)){
 
-      DigitalSignature mac =new DigitalSignature();
-      String id= generateRandom();
+  public  SecurityHandler()  {
+      try{
+			FileInputStream fis = new FileInputStream("../keystore/data/server.jce");
+			KeyStore ksa = KeyStore.getInstance("JCEKS");
 
-      unconfirm.put(id,mac);
-	  System.out.println("REGISTER MAC: "+unconfirm.get(id).getKey());
-      nounces.add(nounce);
-      Nounces nounceCLASS = new Nounces(pubKey);
-      String  nounceJSON= nounceCLASS.generate();
-      String key = mac.getKey();
-      RSA rsa =new RSA(pubKey);
-      String keyEncryt= rsa.encrypt(key);
-      resObj.put("nounce",nounceJSON);
-      resObj.put("key",keyEncryt);
-      resObj.put("id",id);
-      String token=mac.sign(resObj);
-      HttpResponse result= new HttpResponse(token,resObj);
-      return result;
+			ksa.load(fis, "server".toCharArray());
+			fis.close();
+			this.privateKey = (PrivateKey) ksa.getKey("privateKey", "server".toCharArray());
+			X509Certificate certificate = (X509Certificate) ksa.getCertificate("privateKey");
+			this.publicKey = certificate.getPublicKey();
+    }catch(Exception e){
+
     }
-    resObj.put("nounce","number");
-    resObj.put("status","error");
-    HttpResponse result= new HttpResponse("",resObj);
-
-    return result;
   }
 
-  public HttpResponse confirm(String token,JSONObject reqObj) throws Exception {
-    String nounce =reqObj.get("nounce").toString();
-    String pubKey =reqObj.get("publicKey").toString();
-    String id =reqObj.get("id").toString();
-	System.out.println("CONFIRM ID:"+id);
+
+  public HttpResponse register(String token, JSONObject reqObj) throws Exception {
+
+    String clientPubKey =reqObj.get("publicKey").toString();
     JSONObject resObj= new JSONObject();
-    Nounces nounceCLASS = new Nounces(pubKey);
-    String  nounceJSON= nounceCLASS.generate();
-
-    if(!nounces.contains(nounce)){
-      DigitalSignature mac = unconfirm.get(id);
-	  System.out.println("CONFIRM HAS SIZE:"+unconfirm.size());
-	  for ( String key : unconfirm.keySet() ) {
-    		System.out.println( key );
-	  }
-	  System.out.println("CONFIRM MAC: "+unconfirm.get(id));
-      if(mac!=null){
-
-        if(mac.verify(token,reqObj)){
-          users.put(pubKey,mac);
-          mac= users.get(pubKey);
-          unconfirm.remove(id);
-          nounces.add(nounce);
-
-          resObj.put("nounce",nounceJSON);
-          resObj.put("status","ok");
-
-          token=mac.sign(resObj);
-          HttpResponse result= new HttpResponse(token,resObj);
-		  System.out.println("CONFIRM OK");
-          return result;
-        }
-		System.out.println("CONFIRM MAC ERROR");
+    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    if(signature.verify(token,resObj)){
+      User user=users.get(clientPubKey);
+      if(user==null){
+        user=new User(signature);
+        this.users.put(clientPubKey,user);
       }
-	  System.out.println("CONFIRM ID ERROR!");
-    }
-	System.out.println("ERROR: "+nounceJSON);
-    resObj.put("nounce",nounceJSON);
-    resObj.put("status","error");
-    HttpResponse result= new HttpResponse("",resObj);
+        resObj=user.getSeqNumber().state();
+        resObj.put("publicKey",this.publicKey);
+        resObj.put("status","200 OK");
 
-    return result;
+      }else{
+        resObj.put("status","403 Server failed to authenticate the request");
+      }
+    token = signature.sign(resObj);
+
+
+    return new HttpResponse(token,resObj);
   }
 
-  public HttpResponse put(String token,JSONObject reqObj) throws Exception{
-    String nounce =reqObj.get("nounce").toString();
-    String pubKey =reqObj.get("publicKey").toString();
+
+  public HttpResponse init(String token, JSONObject reqObj) throws Exception {
+
+    String clientPubKey =reqObj.get("publicKey").toString();
+    JSONObject resObj= new JSONObject();
+    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    if(signature.verify(token,resObj)){
+      User user=users.get(clientPubKey);
+      if(user!=null){
+        resObj=user.getSeqNumber().state();
+        resObj.put("publicKey",this.publicKey);
+        resObj.put("status","OK");
+      }
+      else{
+        resObj.put("status","User Does not exist");
+      }
+
+
+      }else{
+        resObj.put("status","Server failed to authenticate the request");
+      }
+    token = signature.sign(resObj);
+
+
+    return new HttpResponse(token,resObj);
+  }
+
+  public synchronized HttpResponse put(String token, JSONObject reqObj) throws Exception {
+    String clientPubKey =reqObj.get("publicKey").toString();
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
     String password =reqObj.get("password").toString();
-
     JSONObject resObj= new JSONObject();
-    Nounces nounceCLASS = new Nounces(pubKey);
-    System.out.println("nounce");
-    String  nounceJSON= nounceCLASS.generate();
-    System.out.println(nounceJSON);
-
-    if(users.get(pubKey)!=null){
-
-      DigitalSignature mac = users.get(pubKey);
-      if(!nounces.contains(nounce)){
-
-        if(mac!=null){
-
-          if(mac.verify(token,reqObj)){
-            nounces.add(nounce);
-            String status=api.put(pubKey,domain,username,password);
-
-            if(status.equals("OK")){
-              resObj.put("nounce",nounceJSON);
-              resObj.put("status","ok");
-              token=mac.sign(resObj);
-              HttpResponse result= new HttpResponse(token,resObj);
-              return result;
-            }
-          }
+    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    if(signature.verify(token,resObj)){
+      User user=users.get(clientPubKey);
+      if(user!=null){
+        if(user.getSeqNumber().verify(reqObj)){
+          user.put(domain,username,password);
+          resObj=user.getSeqNumber().request(resObj);
+          resObj.put("status","OK");
+        }else{
+          resObj.put("status","Invalid sequencial number");
         }
+      }else{
+        resObj.put("status","User does not exist");
       }
+    }else{
+      resObj.put("status","Failed to verify signature");
     }
-    resObj.put("nounce",nounceJSON);
-    resObj.put("status","error");
-    HttpResponse result= new HttpResponse("",resObj);
-    return result;
+    token = signature.sign(resObj);
 
-
-
-
+    return new HttpResponse(token,resObj);
   }
-  public HttpResponse get(String token,JSONObject reqObj) throws Exception{
-    String nounce =reqObj.get("nounce").toString();
-    String pubKey =reqObj.get("publicKey").toString();
+
+  public HttpResponse get(String token, JSONObject reqObj) throws Exception {
+    String clientPubKey =reqObj.get("publicKey").toString();
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
     JSONObject resObj= new JSONObject();
-    Nounces nounceCLASS = new Nounces(pubKey);
-    System.out.println("nounce");
-    String  nounceJSON= nounceCLASS.generate();
-
-    if(users.get(pubKey)!=null){
-      DigitalSignature mac = users.get(pubKey);
-      if(!nounces.contains(nounce)){
-        if(mac!=null){
-          if(mac.verify(token,reqObj)){
-            nounces.add(nounce);
-
-            String res=api.get(pubKey,domain,username);
-            if(!res.equals("Error")){
-              resObj.put("nounce",nounceJSON);
-              resObj.put("password",res);
-              resObj.put("status","ok");
-              token=mac.sign(resObj);
-              HttpResponse result= new HttpResponse(token,resObj);
-              return result;
-            }
+    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    if(signature.verify(token,resObj)){
+      User user=users.get(clientPubKey);
+      if(user!=null){
+        if(user.getSeqNumber().verify(reqObj)){
+          String pass=user.get(domain,username);
+          if(pass!=null){
+            resObj=user.getSeqNumber().request(resObj);
+            resObj.put("status","OK");
+            resObj.put("password",pass);
+          }else{
+            resObj.put("status","Domain or user does not exist");
           }
+        }else{
+          resObj.put("status","Invalid sequencial number");
         }
+      }else{
+        resObj.put("status","User does not exist");
       }
-
+    }else{
+      resObj.put("status","Failed to verify signature");
     }
-    resObj.put("nounce",nounceJSON);
-    resObj.put("status","error");
-    HttpResponse result= new HttpResponse("",resObj);
-    return result;
+    token = signature.sign(resObj);
+
+
+    return new HttpResponse(token,resObj);
   }
 
 
-  private String generateRandom(){
-    SecureRandom ranGen = new SecureRandom();
-    byte[] arr = new byte[128];
-    ranGen.nextBytes(arr);
-    return Base64.getEncoder().encodeToString(arr);
-  }
 
 
 

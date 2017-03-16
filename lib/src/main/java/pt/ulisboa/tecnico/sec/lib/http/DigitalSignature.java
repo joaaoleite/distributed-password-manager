@@ -15,7 +15,7 @@ import java.util.Base64;
 
 /** Generate a digital signature */
 public class DigitalSignature {
-	private PublicKey publicKey  ;
+	private PublicKey publicKey;
 	private PrivateKey privateKey;
 
 
