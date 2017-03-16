@@ -28,7 +28,7 @@ public class API{
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
 			JSONObject response = http.post(endpoint+"/register", params);
-			String seqNumber = response.getString("seq");
+			String seqNumber = response.getLong("seq")+"";
 			String serverPublicKey = response.getString("publicKey");
 			return new String[]{seqNumber, serverPublicKey};
 		}
@@ -42,7 +42,7 @@ public class API{
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
 			JSONObject response = http.post(endpoint+"/init", params);
-			String seqNumber = response.getString("seq");
+			String seqNumber = response.getLong("seq")+"";
 			String serverPublicKey = response.getString("publicKey");
 			return new String[]{seqNumber, serverPublicKey};
 		}
@@ -79,6 +79,7 @@ public class API{
 				throw new PutFailException(status);
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			throw new PutFailException();
 		}
 	}

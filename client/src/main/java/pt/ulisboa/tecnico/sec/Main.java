@@ -50,10 +50,10 @@ public class Main {
 				Session session = Session.newInstance();
 				if(session.login(username,password)){
 					client = new Client(session, address, port);
-					System.out.println(">>> Login successful!");
+					System.out.println(">>> KeyStore unlocked successful!");
 					break;
 				}
-				else System.out.println(">>> Login error!");
+				else System.out.println(">>> KeyStore unlocking error!");
 			}
 
 			if(client==null){

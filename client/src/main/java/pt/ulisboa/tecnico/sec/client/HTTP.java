@@ -35,17 +35,18 @@ public class HTTP {
 
 		JSONObject response = request.getBody().getObject();
 
-		// Verify Digital Signature
-		String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
-		if(!session.DigitalSignature().verify(token, response))
-			throw new DigitalSignatureErrorException(token);
-
-		// Verify Sequence Number
 		try{
+			// Verify Digital Signature
+			String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
+			if(!session.DigitalSignature().verify(token, response))
+				throw new DigitalSignatureErrorException(token);
+
+			// Verify Sequence Number
 			if(!session.SeqNumber().verify(json))
 				throw new RepetedNounceException(token);
 		}
 		catch(NullPointerException e){ }
+		catch(java.security.InvalidKeyException e){ }
 
 		return response;
 	}

@@ -34,7 +34,7 @@ public class SecurityHandler
 			X509Certificate certificate = (X509Certificate) ksa.getCertificate("privateKey");
 			this.publicKey = certificate.getPublicKey();
     }catch(Exception e){
-
+      System.out.println(e);
     }
   }
 
@@ -44,15 +44,15 @@ public class SecurityHandler
     String clientPubKey =reqObj.get("publicKey").toString();
     JSONObject resObj= new JSONObject();
     DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
-    if(signature.verify(token,resObj)){
+    if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user==null){
         user=new User(signature);
         this.users.put(clientPubKey,user);
       }
         resObj=user.getSeqNumber().state();
-        resObj.put("publicKey",this.publicKey);
-        resObj.put("status","200 OK");
+        resObj.put("publicKey",RSA.publicKeyToString(this.publicKey));
+        resObj.put("status","ok");
 
       }else{
         resObj.put("status","403 Server failed to authenticate the request");
@@ -69,12 +69,12 @@ public class SecurityHandler
     String clientPubKey =reqObj.get("publicKey").toString();
     JSONObject resObj= new JSONObject();
     DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
-    if(signature.verify(token,resObj)){
+    if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user!=null){
         resObj=user.getSeqNumber().state();
-        resObj.put("publicKey",this.publicKey);
-        resObj.put("status","OK");
+        resObj.put("publicKey",RSA.publicKeyToString(this.publicKey));
+        resObj.put("status","ok");
       }
       else{
         resObj.put("status","User Does not exist");
@@ -97,13 +97,13 @@ public class SecurityHandler
     String password =reqObj.get("password").toString();
     JSONObject resObj= new JSONObject();
     DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
-    if(signature.verify(token,resObj)){
+    if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user!=null){
         if(user.getSeqNumber().verify(reqObj)){
           user.put(domain,username,password);
           resObj=user.getSeqNumber().request(resObj);
-          resObj.put("status","OK");
+          resObj.put("status","ok");
         }else{
           resObj.put("status","Invalid sequencial number");
         }
@@ -124,14 +124,14 @@ public class SecurityHandler
     String username =reqObj.get("username").toString();
     JSONObject resObj= new JSONObject();
     DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
-    if(signature.verify(token,resObj)){
+    if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user!=null){
         if(user.getSeqNumber().verify(reqObj)){
           String pass=user.get(domain,username);
           if(pass!=null){
             resObj=user.getSeqNumber().request(resObj);
-            resObj.put("status","OK");
+            resObj.put("status","ok");
             resObj.put("password",pass);
           }else{
             resObj.put("status","Domain or user does not exist");
@@ -150,10 +150,5 @@ public class SecurityHandler
 
     return new HttpResponse(token,resObj);
   }
-
-
-
-
-
 
 }
