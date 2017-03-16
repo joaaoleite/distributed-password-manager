@@ -21,10 +21,6 @@ public class RSA {
 		this.privateKey = privateKey;
 	}
 
-	public RSA(PublicKey publicKey) throws Exception{
-		this.publicKey = publicKey;
-	}
-
 	public RSA(KeyPair keys) throws Exception {
 		this.publicKey = keys.getPublic();
 		this.privateKey = keys.getPrivate();
@@ -38,14 +34,28 @@ public class RSA {
 		this.publicKey = pubKey;
 	}
 
-	public String encrypt(String plainText) throws Exception{
+	public String encryptWithPublicKey(String plainText) throws Exception{
 		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 		byte[] textInBytes = plainText.getBytes("UTF-8");
 		byte[] cipheredBytes = cipher.doFinal(textInBytes);
 		return Base64.getEncoder().encodeToString(cipheredBytes);
 	}
 
-	public String decrypt(String cipheredText) throws Exception{
+	public String encryptWithPrivateKey(String plainText) throws Exception{
+		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+		byte[] textInBytes = plainText.getBytes("UTF-8");
+		byte[] cipheredBytes = cipher.doFinal(textInBytes);
+		return Base64.getEncoder().encodeToString(cipheredBytes);
+	}
+
+	public String decryptWithPublicKey(String cipheredText) throws Exception{
+		cipher.init(Cipher.DECRYPT_MODE, publicKey);
+		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText);
+		byte[] textInBytes = cipher.doFinal(cipheredBytes);
+		return new String(textInBytes, "UTF-8");
+	}
+
+	public String decryptWithPrivateKey(String cipheredText) throws Exception{
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		byte[] cipheredBytes = Base64.getDecoder().decode(cipheredText);
 		byte[] textInBytes = cipher.doFinal(cipheredBytes);
