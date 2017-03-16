@@ -31,11 +31,7 @@ public class RSA {
 	}
 
 	public RSA(String pubKeyString) throws Exception {
-		byte[] publicBytes = Base64.getDecoder().decode(pubKeyString);
-		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		PublicKey pubKey = keyFactory.generatePublic(keySpec);
-		this.publicKey = pubKey;
+		this.publicKey = stringToPublicKey(pubKeyString);
 	}
 
 	public String encrypt(String plainText) throws Exception{
@@ -58,5 +54,16 @@ public class RSA {
 		keyGen.initialize(2048, random);
 		KeyPair pair = keyGen.generateKeyPair();
 		return pair;
+	}
+	public static PublicKey stringToPublicKey(String publicKey) throws Exception{
+		byte[] publicBytes = Base64.getDecoder().decode(publicKey);
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		PublicKey pubKey = keyFactory.generatePublic(keySpec);
+		return pubKey;
+	}
+	public static String publicKeyToString(PublicKey publicKey) throws Exception{
+		return Base64.getEncoder().encodeToString(publicKey.getEncoded());
+
 	}
 }

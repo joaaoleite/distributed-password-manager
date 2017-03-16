@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.sec.client;
 
 import java.security.PublicKey;
-import java.util.Base64;
 import org.json.JSONObject;
 import java.security.Key;
 
@@ -17,14 +16,14 @@ public class API{
 
 	public API(String address, int port, PublicKey key){
 		this.endpoint = "http://" + address + ":" + port;
-		this.publicKey = Base64.getEncoder().encodeToString(key.getEncoded());
+		this.publicKey = RSA.publicKeyToString(key);
 		this.http = new HTTP(new Nounces(key));
 	}
 	public void enableDigitalSignature(String key){
 		http.sign(key);
 	}
 	public void enableDigitalSignature(Key key){
-		http.sign(Base64.getEncoder().encodeToString(key.getEncoded()));
+		http.sign(RSA.publicKeyToString(key));
 	}
 
 	public String[] register() throws RegisterFailException{
