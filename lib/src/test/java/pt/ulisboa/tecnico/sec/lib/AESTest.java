@@ -10,10 +10,12 @@ import pt.ulisboa.tecnico.sec.lib.exceptions.*;
 
 import java.util.Base64;
 import javax.crypto.SecretKey;
+import java.util.HashMap;
 
 public class AESTest extends TestCase {
 
 	public void testAESKey() throws Exception{
+
 		System.out.println("---TESTING AES KEY CREATION FROM STRING---");
 
 		System.out.println("Generating key...");
@@ -51,6 +53,7 @@ public class AESTest extends TestCase {
 		assertEquals(decrypted1, decrypted1);
 		System.out.println("Success!");
 	}
+
 
 	public void testAESEncryption() throws Exception{
 		System.out.println("---TESTING AES---");
