@@ -64,6 +64,12 @@ public class RSA {
 	}
 	public static String publicKeyToString(PublicKey publicKey) throws Exception{
 		return Base64.getEncoder().encodeToString(publicKey.getEncoded());
+	}
 
+	public PublicKey getPublicKey(){
+		return publicKey;
+	}
+	public PrivateKey getPrivateKey(){
+		return privateKey;
 	}
 }

@@ -29,6 +29,9 @@ public class DigitalSignature {
 	public void setPublicKey(String publicKey) throws Exception{
 		this.publicKey = RSA.stringToPublicKey(publicKey);
 	}
+	public void setPublicKey(PublicKey publicKey) throws Exception{
+		this.publicKey = publicKey;
+	}
 
 
     public String sign(JSONObject json) throws Exception {

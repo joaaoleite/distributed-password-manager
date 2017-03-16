@@ -11,6 +11,6 @@ import pt.ulisboa.tecnico.sec.lib.exceptions.*;
 public class LibTest extends TestCase {
 
 	public void test() throws Exception {
-		
+		System.out.println("\n\n\n");
 	}
 }

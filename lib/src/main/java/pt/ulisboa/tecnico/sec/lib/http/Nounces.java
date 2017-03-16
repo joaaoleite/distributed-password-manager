@@ -1,46 +1,81 @@
 package pt.ulisboa.tecnico.sec.lib.http;
 
-import java.util.Base64;
-import java.util.ArrayList;
+import org.json.JSONObject;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.security.SecureRandom;
 import java.security.PublicKey;
-import java.nio.ByteBuffer;
-import java.time.Instant;
+import java.math.BigInteger;
+import org.json.JSONObject;
 
-import pt.ulisboa.tecnico.sec.lib.exceptions.*;
+import pt.ulisboa.tecnico.sec.lib.crypto.*;
 
-public class Nounces extends ArrayList<String> {
+public class Nounces {
 
-	private byte[] keyBytes;
+  private static final int MINUTES = 10;
+  private HashMap<String,Date> nounces;
+  private RSA rsa;
+  private String last;
 
-	public Nounces(String key){
-		super();
-    	keyBytes = Base64.getDecoder().decode(key);
-	}
+  public Nounces(RSA rsa){
+    this.rsa = rsa;
+    this.init();
+  }
+  public Nounces(String publicKey) throws Exception{
+    this.rsa = new RSA(publicKey);
+    this.init();
+  }
+  public Nounces(PublicKey publicKey) throws Exception{
+    this.rsa = new RSA(publicKey);
+    this.init();
+  }
 
-	public Nounces(PublicKey key){
-		super();
-    	keyBytes = key.getEncoded();
-  	}
+  private void init(){
 
-	public String generate(){
-		long epoch = Instant.now().toEpochMilli();
-    	ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-    	buffer.putLong(epoch);
-    	byte[] epochBytes = buffer.array();
+    this.nounces = new HashMap<String,Date>();
+    this.last = "";
 
-		byte[] nounce = new byte[2 * keyBytes.length];
-    	for(int i = 0; i < keyBytes.length; i++){
-      		nounce[2 * i] = keyBytes[i];
-	      	nounce[(2 * i) + 1] = epochBytes[i % epochBytes.length];
-    	}
-		String result = Base64.getEncoder().encodeToString(nounce);
-		super.add(result);
-		return result;
-	}
-	public boolean verify(String nounce){
-		if(super.contains(nounce) || nounce==null)
-			return false;
-		super.add(nounce);
-		return true;
-	}
+    new Thread(){ public void run(){
+      nounces.forEach((String nounce, Date date)->{
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, - MINUTES);
+        if(date.before(cal.getTime()))
+          nounces.remove(nounce);
+      });
+    }}.start();
+  }
+
+  public JSONObject generate() throws Exception{
+    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+    String nounce = new BigInteger(130, random).toString(32);
+    nounces.put(nounce, new Date());
+    JSONObject json = new JSONObject();
+    json.put("nounce", rsa.encrypt(nounce));
+    return json;
+  }
+
+  public JSONObject request(JSONObject nounceReq, JSONObject json) throws Exception{
+    String encrypted = nounceReq.getString("nounce");
+    String nounce = rsa.decrypt(encrypted);
+    nounces.put(nounce, new Date());
+    json.put("nounce", nounce);
+    return json;
+  }
+
+  public JSONObject response(JSONObject json){
+    String nounce = last;
+    this.last = "";
+    json.put("nounce",nounce);
+    return json;
+  }
+
+  public boolean verify(JSONObject obj){
+    String nounce = obj.getString("nounce");
+    if(nounces.remove(nounce) != null){
+      last = nounce;
+      return true;
+    }
+    else return false;
+  }
 }
