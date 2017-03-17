@@ -25,7 +25,7 @@ Maven projects:
 
 ### Description
 
-Project description
+Our Password Manager is divided in 4 major projects: The Client, the Server, the KeyStore and the Lib. It is a RESTful system, so the Client and the Server communicate over HTTP, exchanging JSON Objects. For this process, we are using the Unirest Framework API in the Client-side to send requests, and the Spark Framework API on the Server-side to answer them. Both client and server depend on the Lib Project, that is a library that contains cryptographic methods and other shared code between the two sides of the system, and on the Keystore Project, an independent Key Manager, that generate and provides the client and the server a pair of Public/Private Keys.
 
 
 
@@ -38,11 +38,24 @@ Project description
 	mvn install
 	```
 
+* Generate keystore to server
+
+	```
+	cd keystore
+	mvn compile exec:java
+	```
+
+	```
+	...
+	Enter username: server
+	Enter password: server
+	...
+	```
 * Generate keystore to client
 
 	```
 	cd keystore
-	mvn package exec:java
+	mvn compile exec:java
 	```
 
 	```
@@ -54,22 +67,42 @@ Project description
 
 * Run in parallel
 
-	* client
+	* server
 
 		```
+		cd server
+		mvn compile exec:java
+
+	* client
+
+	```
 		cd client
-		mvn package exec:java
+		mvn compile exec:java
 		```
 
 		```
 		# 1. Call init
 		# 2. Login with username and password from keystore
-		# 3. Put and/or get passwords
+		# 3. Register
+		# 4. Put and/or get passwords
 		```
+	```
 
-	* server
 
-		```
-		cd server
-		mvn package exec:java
-		```
+### Tests
+
+* Run mvn tests on Lib
+
+```
+cd lib
+mvn test
+```
+
+* Run mvn tests on Client
+
+> create server / server KeyStore
+> create username / password KeyStore
+
+```
+mvn test 
+```
