@@ -4,35 +4,37 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- * Unit test for simple App.
- */
-public class ClientTest
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public ClientTest( String testName )
-    {
-        super( testName );
-    }
+import pt.ulisboa.tecnico.sec.Client;
+import pt.ulisboa.tecnico.sec.client.*;
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( ClientTest.class );
-    }
+public class ClientTest extends TestCase {
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testClient()
-    {
-        assertTrue( true );
-    }
+  private String address;
+  private int port;
+  private Session session;
+
+  protected void setUp(){
+    address = "localhost";
+    port = 8080;
+    session = Session.newInstance();
+  }
+
+  public void test(){
+
+    session.login("username","password");
+
+    Client client = new Client(session, address, port);
+
+    client.register();
+
+    String domain = "gmail.com";
+    String username = "example@gmail.com";
+    String password = "123456789";
+
+    client.savePassword(domain,username,password);
+
+    String passwordFromServer = client.retrievePassword(domain,username);
+
+    assertEquals(password, passwordFromServer);
+  }
 }
