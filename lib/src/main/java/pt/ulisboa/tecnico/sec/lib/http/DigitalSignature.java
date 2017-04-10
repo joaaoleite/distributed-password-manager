@@ -17,7 +17,8 @@ import java.util.Base64;
 public class DigitalSignature {
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
-
+	public DigitalSignature(){
+	}
 
 	public DigitalSignature(PrivateKey privateKey) throws Exception{
 		this.privateKey = privateKey;

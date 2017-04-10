@@ -18,47 +18,31 @@ import java.security.cert.X509Certificate;
 public class SecurityHandler
 {
 
-  private PrivateKey privateKey;
-  private PublicKey publicKey;
+
   private HashMap<String,User> users = new HashMap<String,User>();
-
-
-  public  SecurityHandler()  {
-      try{
-			FileInputStream fis = new FileInputStream("../keystore/data/server.jce");
-			KeyStore ksa = KeyStore.getInstance("JCEKS");
-
-			ksa.load(fis, "server".toCharArray());
-			fis.close();
-			this.privateKey = (PrivateKey) ksa.getKey("privateKey", "server".toCharArray());
-			X509Certificate certificate = (X509Certificate) ksa.getCertificate("privateKey");
-			this.publicKey = certificate.getPublicKey();
-    }catch(Exception e){
-      System.out.println(e);
-    }
-  }
 
 
   public HttpResponse register(String token, JSONObject reqObj) throws Exception {
 
     String clientPubKey =reqObj.get("publicKey").toString();
     JSONObject resObj= new JSONObject();
-    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    DigitalSignature signature = new DigitalSignature();
+    signature.setPublicKey(clientPubKey);
     if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user==null){
-        user=new User(signature);
+        user=new User();
         this.users.put(clientPubKey,user);
       }
         resObj=user.getSeqNumber().state();
-        resObj.put("publicKey",RSA.publicKeyToString(this.publicKey));
+        resObj.put("key",new RSA(clientPubKey).encrypt(user.getHMAC().getKey()));
         resObj.put("status","ok");
+        token = user.getHMAC().sign(resObj);
 
       }else{
         resObj.put("status","403 Server failed to authenticate the request");
+        token="";
       }
-    token = signature.sign(resObj);
-
 
     return new HttpResponse(token,resObj);
   }
@@ -68,23 +52,27 @@ public class SecurityHandler
 
     String clientPubKey =reqObj.get("publicKey").toString();
     JSONObject resObj= new JSONObject();
-    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    DigitalSignature signature = new DigitalSignature();
+    signature.setPublicKey(clientPubKey);
     if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user!=null){
         resObj=user.getSeqNumber().state();
-        resObj.put("publicKey",RSA.publicKeyToString(this.publicKey));
+        resObj.put("key",new RSA(clientPubKey).encrypt(user.getHMAC().getKey()));
         resObj.put("status","ok");
+        token = user.getHMAC().sign(resObj);
+
       }
       else{
+        token="";
         resObj.put("status","User Does not exist");
       }
-
-
       }else{
+        token="";
         resObj.put("status","Server failed to authenticate the request");
+
       }
-    token = signature.sign(resObj);
+
 
 
     return new HttpResponse(token,resObj);
@@ -96,7 +84,8 @@ public class SecurityHandler
     String username =reqObj.get("username").toString();
     String password =reqObj.get("password").toString();
     JSONObject resObj= new JSONObject();
-    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    DigitalSignature signature = new DigitalSignature();
+    signature.setPublicKey(clientPubKey);
     if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user!=null){
@@ -113,7 +102,7 @@ public class SecurityHandler
     }else{
       resObj.put("status","Failed to verify signature");
     }
-    token = signature.sign(resObj);
+    token = "";
 
     return new HttpResponse(token,resObj);
   }
@@ -123,7 +112,8 @@ public class SecurityHandler
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
     JSONObject resObj= new JSONObject();
-    DigitalSignature signature = new DigitalSignature(this.privateKey,clientPubKey);
+    DigitalSignature signature = new DigitalSignature();
+    signature.setPublicKey(clientPubKey);
     if(signature.verify(token,reqObj)){
       User user=users.get(clientPubKey);
       if(user!=null){
@@ -133,20 +123,23 @@ public class SecurityHandler
             resObj=user.getSeqNumber().request(resObj);
             resObj.put("status","ok");
             resObj.put("password",pass);
+            token = user.getHMAC().sign(resObj);
           }else{
             resObj.put("status","Domain or user does not exist");
+            token="";
           }
         }else{
           resObj.put("status","Invalid sequencial number");
+          token="";
         }
       }else{
         resObj.put("status","User does not exist");
+        token="";
       }
     }else{
       resObj.put("status","Failed to verify signature");
+      token="";
     }
-    token = signature.sign(resObj);
-
 
     return new HttpResponse(token,resObj);
   }
