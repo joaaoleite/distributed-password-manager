@@ -1,6 +1,6 @@
 
-*.classpath
-effective.pom
+#*.classpath
+#effective.pom
 keystore/data/
 
 # Created by https://www.gitignore.io/api/java,maven
