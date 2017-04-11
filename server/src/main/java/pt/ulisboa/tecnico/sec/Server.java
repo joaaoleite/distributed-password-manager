@@ -22,6 +22,7 @@ public class Server
     for (Integer i = 0; i < args.length; i++) {
       System.out.println( "Server address: http://localhost:" + args[i]);
       new Routes(Service.ignite().port(Integer.parseInt(args[i])));
+      
     }
 
   }
