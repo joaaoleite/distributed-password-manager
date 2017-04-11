@@ -1,8 +1,8 @@
 string=$(ps)
 mvn compile
 if [[ $string == *"tmux"* ]]; then
-  echo "tmux"
-
+  echo "Using Tmux"
+  tmuxWindowID=$(tmux display-message -p '#I')
   tmux rename-session "sec"
   window=$(tmux list-windows -t sec | cut -d ':' -f 1 |awk 'END{print}')
   var=0
@@ -14,6 +14,7 @@ if [[ $string == *"tmux"* ]]; then
     tmux send-keys -t sec:$var " mvn exec:java -Dexec.args="808"$i" Enter
     var=$((var+1))
   done
+  tmux select-window -t:$tmuxWindowID
 else
   for (( i=0; i < $1; i++))
   do
