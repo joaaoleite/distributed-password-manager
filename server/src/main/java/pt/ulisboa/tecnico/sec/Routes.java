@@ -27,6 +27,7 @@ public class Routes
       System.out.println(logString);
       log.add(logString);
       System.out.println(log.size());
+
       
     });
 
