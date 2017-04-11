@@ -18,12 +18,11 @@ public class Server
 
 
   public static void main( String[] args ){
+      System.out.println("starting server....");
+      new Routes(Service.ignite().port(Integer.parseInt(args[0])));
+      System.out.println( "Server address: http://localhost:" + args[0]);
 
-    for (Integer i = 0; i < args.length; i++) {
-      System.out.println( "Server address: http://localhost:" + args[i]);
-      new Routes(Service.ignite().port(Integer.parseInt(args[i])));
-      
-    }
+
 
   }
 
