@@ -49,6 +49,8 @@
     <mainclass>pt.ulisboa.tecnico.sec.Server</mainclass>
     <address>localhost</address>
     <port>8080</port>
+    <port1>8081</port1>
+    <port2>8082</port2>
   </properties>
   <build>
     <plugins>
@@ -68,6 +70,8 @@
           <mainClass>${mainclass}</mainClass>
           <arguments>
             <argument>${port}</argument>
+            <argument>${port1}</argument>
+            <argument>${port2}</argument>
           </arguments>
         </configuration>
       </plugin>

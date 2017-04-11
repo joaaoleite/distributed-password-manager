@@ -3,15 +3,16 @@ import static spark.Spark.*;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
+import spark.Service;
 
 
 public class Routes
 {
-  public Routes(){
+  public Routes(  Service http){
     SecurityHandler security = new SecurityHandler();
     ArrayList<String> log = new ArrayList<String>();
 
-    before((request, response) -> {
+    http.before((request, response) -> {
       String logString="----------Log------------\n"+"Session id: "+request.session().id()+"\nClient ip: "+request.ip()+"\nProtocol: " +request.protocol()+"\nMethod: /"+request.requestMethod()+"\nUrl: "+request.url()+"\nRequest UserAgent: "+request.userAgent()+"\nArguments:\n";
       JSONObject reqObj = new JSONObject(request.body().toString());
       Iterator<?> keys = reqObj.keys();
@@ -25,9 +26,10 @@ public class Routes
       logString+="------------------------";
       System.out.println(logString);
       log.add(logString);
+      System.out.println(log.size());
     });
 
-    post("/init", (request, response) -> {
+    http.post("/init", (request, response) -> {
 
       try {
         response.type("application/json");
@@ -47,7 +49,7 @@ public class Routes
     });
 
 
-    post("/register", (request, response) -> {
+    http.post("/register", (request, response) -> {
 
       try {
         response.type("application/json");
@@ -66,7 +68,7 @@ public class Routes
 
     });
 
-    post("/put", (request, response) -> {
+    http.post("/put", (request, response) -> {
 
       try {
         response.type("application/json");
@@ -83,7 +85,7 @@ public class Routes
         return resObj;
       }
     });
-    post("/get", (request, response) -> {
+    http.post("/get", (request, response) -> {
 
       try {
         response.type("application/json");
