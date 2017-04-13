@@ -24,9 +24,9 @@ public class Client {
 		try{
 			String[] response = api.register();
 			String seqNumber = response[0];
-			String serverPublicKey = response[1];
+			String hmacKey = response[1];
 			session.SeqNumber(seqNumber);
-			session.DigitalSignature(serverPublicKey);
+			session.HMAC(hmacKey);
 			this.started = true;
 			return true;
 		}
@@ -39,10 +39,10 @@ public class Client {
 		try{
 			String[] response = api.init();
 			String seqNumber = response[0];
-			String serverPublicKey = response[1];
+			String hmacKey = response[1];
 			if(seqNumber != null){
 				session.SeqNumber(seqNumber);
-				session.DigitalSignature(serverPublicKey);
+				session.HMAC(hmacKey);
 				this.started = true;
 			}
 			else {

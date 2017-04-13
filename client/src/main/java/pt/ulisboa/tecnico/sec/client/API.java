@@ -29,8 +29,8 @@ public class API{
 			params.put("publicKey", publicKey);
 			JSONObject response = http.post(endpoint+"/register", params);
 			String seqNumber = response.getLong("seq")+"";
-			String serverPublicKey = response.getString("publicKey");
-			return new String[]{seqNumber, serverPublicKey};
+			String hmacKey = response.getString("key");
+			return new String[]{seqNumber, hmacKey};
 		}
 		catch(Exception e){
 			throw new RegisterFailException();
@@ -43,8 +43,8 @@ public class API{
 			params.put("publicKey", publicKey);
 			JSONObject response = http.post(endpoint+"/init", params);
 			String seqNumber = response.getLong("seq")+"";
-			String serverPublicKey = response.getString("publicKey");
-			return new String[]{seqNumber, serverPublicKey};
+			String hmacKey = response.getString("key");
+			return new String[]{seqNumber, hmacKey};
 		}
 		catch(Exception e){
 			throw new RegisterFailException();

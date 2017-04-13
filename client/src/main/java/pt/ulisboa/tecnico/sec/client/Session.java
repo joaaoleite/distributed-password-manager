@@ -26,6 +26,7 @@ public class Session {
 	private X509Certificate certificate;
 	private PublicKey serverPublicKey;
 	private KeyStore ksa;
+	private HMAC hmac;
 	private char[] password;
 	private String username;
 
@@ -84,6 +85,13 @@ public class Session {
 		catch(Exception e){
 			return null;
 		}
+	}
+	public HMAC HMAC(){
+		return hmac;
+	}
+	public HMAC HMAC(String key){
+		this.hmac = new HMAC(key);
+		return this.hmac;
 	}
 	public void DigitalSignature(String serverPublicKey) throws Exception{
 		this.serverPublicKey = RSA.stringToPublicKey(serverPublicKey);

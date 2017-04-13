@@ -36,9 +36,9 @@ public class HTTP {
 		JSONObject response = request.getBody().getObject();
 
 		try{
-			// Verify Digital Signature
+			// Verify HMAC Signature
 			String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
-			if(!session.DigitalSignature().verify(token, response))
+			if(!session.HMAC().verify(token, response))
 				throw new DigitalSignatureErrorException(token);
 
 			// Verify Sequence Number
@@ -46,7 +46,7 @@ public class HTTP {
 				throw new RepetedNounceException(token);
 		}
 		catch(NullPointerException e){ }
-		catch(java.security.InvalidKeyException e){ }
+		//catch(java.security.InvalidKeyException e){ }
 
 		return response;
 	}
