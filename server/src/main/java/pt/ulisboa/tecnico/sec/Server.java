@@ -8,21 +8,19 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
 import io.jsonwebtoken.impl.TextCodec;
 import javax.crypto.KeyGenerator;
+import spark.Service;
+import java.util.ArrayList;
+
 
 
 public class Server
 {
 
 
-  public static void main( String[] args )
-  {
-
-    System.out.println( "Server address: http://localhost:" + args[0]);
-    port(Integer.parseInt(args[0]));
-    Routes routes = new Routes();
-
-
-
+  public static void main( String[] args ){
+      System.out.println("starting server....");
+      new Routes(Service.ignite().port(Integer.parseInt(args[0])));
+      System.out.println( "Server address: http://localhost:" + args[0]);
 
 
 
