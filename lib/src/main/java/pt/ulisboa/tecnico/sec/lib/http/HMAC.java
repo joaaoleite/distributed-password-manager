@@ -17,7 +17,7 @@ public class HMAC {
 
 	private Key key;
 	private Date validity;
-	
+
 	public HMAC() throws Exception {
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
 		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");

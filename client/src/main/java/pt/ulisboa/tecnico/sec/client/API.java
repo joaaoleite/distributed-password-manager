@@ -27,7 +27,7 @@ public class API{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
-			JSONObject response = http.post(endpoint+"/register", params);
+			JSONObject response = http.signedPost(endpoint+"/register", params);
 			String seqNumber = response.getLong("seq")+"";
 			String hmacKey = response.getString("key");
 			return new String[]{seqNumber, hmacKey};
@@ -41,7 +41,7 @@ public class API{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
-			JSONObject response = http.post(endpoint+"/init", params);
+			JSONObject response = http.signedPost(endpoint+"/init", params);
 			String seqNumber = response.getLong("seq")+"";
 			String hmacKey = response.getString("key");
 			return new String[]{seqNumber, hmacKey};
@@ -51,7 +51,7 @@ public class API{
 		}
 	}
 
-	public void confirm(String id) throws ConfirmFailException{
+	/*public void confirm(String id) throws ConfirmFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
@@ -64,7 +64,7 @@ public class API{
 		catch(Exception e){
 			throw new ConfirmFailException();
 		}
-	}
+	}*/
 
 	public void put(String domain, String username, String password) throws PutFailException {
 		try {
@@ -73,7 +73,7 @@ public class API{
 			params.put("domain", domain);
 			params.put("username", username);
 			params.put("password", password);
-			JSONObject response = http.post(endpoint+"/put", params);
+			JSONObject response = http.notSignedPost(endpoint+"/put", params);
 			String status = response.getString("status");
 			if(!status.equals("ok"))
 				throw new PutFailException(status);
@@ -90,13 +90,14 @@ public class API{
 			params.put("publicKey", publicKey);
 			params.put("domain", domain);
 			params.put("username", username);
-			JSONObject response = http.post(endpoint+"/get", params);
-			String password = response.getString("password");
+			JSONObject response = http.signedPost(endpoint+"/get", params);
+			String password = response.get("password").toString();
 			if(password.equals("") || password==null)
 				throw new GetFailException();
 			return password;
 		}
 		catch(Exception e){
+			System.out.println(e);
 			throw new GetFailException();
 		}
 	}

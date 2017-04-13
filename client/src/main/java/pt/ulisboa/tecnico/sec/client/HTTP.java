@@ -14,7 +14,15 @@ public class HTTP {
 
 	private Session session = Session.getInstance();
 
-	public JSONObject post(String url, JSONObject json) throws Exception {
+	public JSONObject notSignedPost(String url, JSONObject json) throws Exception {
+		return this.post(url, json, false);
+	}
+
+	public JSONObject signedPost(String url, JSONObject json) throws Exception {
+		return this.post(url, json, true);
+	}
+
+	private JSONObject post(String url, JSONObject json, Boolean signed) throws Exception {
 
 		// Put Sequence Number
 		try{
@@ -35,19 +43,24 @@ public class HTTP {
 
 		JSONObject response = request.getBody().getObject();
 
+		System.out.println(response);
+
 		try{
-			// Verify HMAC Signature
-			String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
-			if(!session.HMAC().verify(token, response))
-				throw new DigitalSignatureErrorException(token);
+
+			if(signed){
+				String token = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
+				if(!session.HMAC().verify(token, response))
+					throw new DigitalSignatureErrorException(token);
+			}
 
 			// Verify Sequence Number
 			if(!session.SeqNumber().verify(json))
-				throw new RepetedNounceException(token);
+				throw new RepetedNounceException("");
 		}
 		catch(NullPointerException e){ }
 		//catch(java.security.InvalidKeyException e){ }
 
 		return response;
 	}
+
 }

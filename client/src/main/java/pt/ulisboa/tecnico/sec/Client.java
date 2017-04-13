@@ -26,7 +26,7 @@ public class Client {
 			String seqNumber = response[0];
 			String hmacKey = response[1];
 			session.SeqNumber(seqNumber);
-			session.HMAC(hmacKey);
+			session.HMAC(session.RSA().decrypt(hmacKey));
 			this.started = true;
 			return true;
 		}
@@ -42,7 +42,7 @@ public class Client {
 			String hmacKey = response[1];
 			if(seqNumber != null){
 				session.SeqNumber(seqNumber);
-				session.HMAC(hmacKey);
+				session.HMAC(session.RSA().decrypt(hmacKey));
 				this.started = true;
 			}
 			else {
