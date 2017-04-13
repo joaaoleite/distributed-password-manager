@@ -83,6 +83,8 @@ public class SecurityHandler
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
     String password =reqObj.get("password").toString();
+    String signaturePass =reqObj.get("signature").toString();
+    long timestamp =reqObj.getLong("timestamp");
     JSONObject resObj= new JSONObject();
     DigitalSignature signature = new DigitalSignature();
     signature.setPublicKey(clientPubKey);
@@ -90,7 +92,7 @@ public class SecurityHandler
       User user=users.get(clientPubKey);
       if(user!=null){
         if(user.getSeqNumber().verify(reqObj)){
-          user.put(domain,username,password);
+          user.put(domain,username,password, signaturePass, timestamp);
           resObj=user.getSeqNumber().request(resObj);
           resObj.put("status","ok");
         }else{
@@ -118,11 +120,13 @@ public class SecurityHandler
       User user=users.get(clientPubKey);
       if(user!=null){
         if(user.getSeqNumber().verify(reqObj)){
-          String pass=user.get(domain,username);
+          JSONObject pass=user.get(domain,username);
           if(pass!=null){
             resObj=user.getSeqNumber().request(resObj);
             resObj.put("status","ok");
-            resObj.put("password",pass);
+            resObj.put("password",pass.get("password"));
+            resObj.put("signature",pass.get("signature"));
+            resObj.put("timestamp",pass.get("timestamp"));
             token = user.getHMAC().sign(resObj);
           }else{
             resObj.put("status","Domain or user does not exist");
