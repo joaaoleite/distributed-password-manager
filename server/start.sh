@@ -11,7 +11,7 @@ if [[ $string == *"tmux"* ]]; then
 
   for (( i=0; i < $1; i++))
   do
-    tmux new-window
+    tmux new-window -n "server"$i
     tmux send-keys -t $nameSession:$var " mvn exec:java -Dexec.args="808"$i" Enter
     var=$((var+1))
   done
