@@ -8,43 +8,48 @@ import pt.ulisboa.tecnico.sec.lib.http.*;
 import pt.ulisboa.tecnico.sec.lib.crypto.RSA;
 
 import pt.ulisboa.tecnico.sec.exceptions.*;
+import pt.ulisboa.tecnico.sec.client.http.Request;
 
-public class API{
+public class API {
 
-	private String endpoint;
-	private HTTP http;
 	private String publicKey;
 
-	public API(String address, int port){
-		this.endpoint = "http://" + address + ":" + port;
+	public API(String address, int port, int replicas){
 		try{
 			this.publicKey = RSA.publicKeyToString(Session.getInstance().getPublicKey());
 		}catch(Exception e){ }
-		this.http = new HTTP();
+		Request.settings(address, port, replicas);
 	}
 
-	public String[] register() throws RegisterFailException{
+	public String register() throws RegisterFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
-			JSONObject response = http.signedPost(endpoint+"/register", params);
-			String seqNumber = response.getLong("seq")+"";
+
+			Request register = new Request("/register");
+			register.make(params);
+			JSONObject response = register.getResponse();
+
 			String hmacKey = response.getString("key");
-			return new String[]{seqNumber, hmacKey};
+			return hmacKey;
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			throw new RegisterFailException();
 		}
 	}
 
-	public String[] init() throws RegisterFailException{
+	public String init() throws RegisterFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
-			JSONObject response = http.signedPost(endpoint+"/init", params);
-			String seqNumber = response.getLong("seq")+"";
+
+			Request init = new Request("/init");
+			init.make(params);
+			JSONObject response = init.getResponse();
+
 			String hmacKey = response.getString("key");
-			return new String[]{seqNumber, hmacKey};
+			return hmacKey;
 		}
 		catch(Exception e){
 			throw new RegisterFailException();
@@ -72,8 +77,23 @@ public class API{
 			params.put("publicKey", publicKey);
 			params.put("domain", domain);
 			params.put("username", username);
+
+			Request get = new Request("/get");
+			get.make(params);
+			long ts = get.getHigherTs();
+
+			ts++;
+			params = new JSONObject();
+			params.put("publicKey", publicKey);
+			params.put("domain", domain);
+			params.put("username", username);
+			params.put("timestamp", ts);
 			params.put("password", password);
-			JSONObject response = http.notSignedPost(endpoint+"/put", params);
+
+			Request put = new Request("/put");
+			put.make(params);
+			JSONObject response = put.getResponse();
+
 			String status = response.getString("status");
 			if(!status.equals("ok"))
 				throw new PutFailException(status);
@@ -90,8 +110,19 @@ public class API{
 			params.put("publicKey", publicKey);
 			params.put("domain", domain);
 			params.put("username", username);
-			JSONObject response = http.signedPost(endpoint+"/get", params);
-			String password = response.get("password").toString();
+
+			Request get = new Request("/get");
+			get.make(params);
+			JSONObject response = get.getResponse();
+
+			params.put("timestamp", response.getString("timestamp"));
+			String password = response.getString("password");
+			params.put("password", password);
+
+			Request put = new Request("/put");
+			put.make(params);
+			response = put.getResponse();
+
 			if(password.equals("") || password==null)
 				throw new GetFailException();
 			return password;

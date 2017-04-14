@@ -60,6 +60,7 @@
 		<mainclass>pt.ulisboa.tecnico.sec.Main</mainclass>
 		<address>localhost</address>
 		<port>8080</port>
+		<replicas>3</replicas>
 	</properties>
 	<build>
 		<plugins>
@@ -80,6 +81,7 @@
 					<arguments>
 						<argument>${address}</argument>
 						<argument>${port}</argument>
+						<argument>${replicas}</argument>
 					</arguments>
 				</configuration>
 			</plugin>

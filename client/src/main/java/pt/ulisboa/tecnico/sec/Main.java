@@ -29,6 +29,7 @@ public class Main {
 
 		String address = args[0];
 		int port = Integer.parseInt(args[1]);
+		int replicas = Integer.parseInt(args[2]);
 		Console c = System.console();
 
 		System.out.println("\nRequests are going to "+address+":"+port);
@@ -49,7 +50,7 @@ public class Main {
 				String password = c.readLine("Master password: ");
 				Session session = Session.newInstance();
 				if(session.login(username,password)){
-					client = new Client(session, address, port);
+					client = new Client(session, address, port, replicas);
 					System.out.println(">>> KeyStore unlocked successful!");
 					break;
 				}

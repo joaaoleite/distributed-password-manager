@@ -13,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.KeyPair;
 import java.util.Base64;
 
+import java.util.HashMap;
 import pt.ulisboa.tecnico.sec.lib.crypto.*;
 import pt.ulisboa.tecnico.sec.lib.http.*;
 
@@ -31,7 +32,8 @@ public class Session {
 	private String username;
 
 	private DigitalSignature signature;
-	private SeqNumber seq;
+	private HashMap<Integer, SeqNumber> seq = new HashMap<Integer,SeqNumber>();
+
 
 	public PrivateKey getPrivateKey(){
 		return privateKey;
@@ -97,11 +99,15 @@ public class Session {
 		this.serverPublicKey = RSA.stringToPublicKey(serverPublicKey);
 		this.signature = new DigitalSignature(privateKey,this.serverPublicKey);
 	}
-	public SeqNumber SeqNumber(){
-		return seq;
+	public SeqNumber SeqNumber(int s){
+		return seq.get(s);
 	}
-	public void SeqNumber(String seq) throws Exception{
-		this.seq = new SeqNumber(Long.parseLong(seq));
+	public void SeqNumber(int s, long q) throws Exception{
+		this.seq.put(s, new SeqNumber(q));
+		System.out.println("SESSION: "+this.seq.get(s));
+	}
+	public void SeqNumber(int s, String q) throws Exception{
+		this.seq.put(s, new SeqNumber(Long.parseLong(q)));
 	}
 
 	public boolean login(String usrname, String passwd){

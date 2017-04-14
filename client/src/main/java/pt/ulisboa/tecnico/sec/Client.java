@@ -13,19 +13,16 @@ public class Client {
 	private API api;
 	private boolean started;
 
-	public Client(Session session, String address, int port){
+	public Client(Session session, String address, int port, int replicas){
 		this.session = session;
 		this.started = false;
-		this.api = new API(address, port);
+		this.api = new API(address, port, replicas);
 		this.init();
 	}
 	public boolean register(){
 		if(started) return false;
 		try{
-			String[] response = api.register();
-			String seqNumber = response[0];
-			String hmacKey = response[1];
-			session.SeqNumber(seqNumber);
+			String hmacKey = api.register();
 			session.HMAC(session.RSA().decrypt(hmacKey));
 			this.started = true;
 			return true;
@@ -37,11 +34,8 @@ public class Client {
 
 	public boolean init(){
 		try{
-			String[] response = api.init();
-			String seqNumber = response[0];
-			String hmacKey = response[1];
-			if(seqNumber != null){
-				session.SeqNumber(seqNumber);
+			String hmacKey = api.init();
+			if(hmacKey != null){
 				session.HMAC(session.RSA().decrypt(hmacKey));
 				this.started = true;
 			}

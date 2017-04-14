@@ -50,6 +50,27 @@ public class DigitalSignature {
 		return Base64.getEncoder().encodeToString(signature);
 	}
 
+	public String sign(String value) throws Exception {
+		byte[] body = value.getBytes("UTF8");
+		Signature sig = Signature.getInstance("SHA512withRSA");
+		sig.initSign(privateKey);
+		sig.update(body);
+		byte[] signature = sig.sign();
+		return Base64.getEncoder().encodeToString(signature);
+	}
+
+	public boolean verify(String token,String value) throws Exception {
+		byte[] body = value.getBytes("UTF8");
+		byte[] cipherDigest = Base64.getDecoder().decode(token);
+		Signature sig = Signature.getInstance("SHA512withRSA");
+		sig.initVerify(publicKey);
+		sig.update(body);
+		try {
+			return sig.verify(cipherDigest);
+		} catch (SignatureException se) {
+			return false;
+		}
+	}
 	public boolean verify(String token,JSONObject json) throws Exception {
 		byte[] body = json.toString().getBytes("UTF8");
 		byte[] cipherDigest = Base64.getDecoder().decode(token);
