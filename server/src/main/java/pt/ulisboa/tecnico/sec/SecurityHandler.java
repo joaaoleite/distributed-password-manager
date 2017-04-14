@@ -96,7 +96,7 @@ public class SecurityHandler
           resObj=user.getSeqNumber().request(resObj);
           resObj.put("status","ok");
         }else{
-
+          resObj=user.getSeqNumber().request(resObj);
           resObj.put("status","Invalid sequencial number");
         }
       }else{
@@ -132,6 +132,7 @@ public class SecurityHandler
             token="";
          }
         }else{
+          resObj=user.getSeqNumber().request(resObj);
           resObj.put("status","Invalid sequencial number");
           token="";
         }
