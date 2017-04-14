@@ -84,7 +84,7 @@ public class Routes
         return resp.getJSON().toString();
       }
       catch(Exception e){
-        System.out.println(e);
+		  e.printStackTrace();
         JSONObject resObj= new JSONObject();
         resObj.put("status","500 Internal Server Error");
         return resObj;
@@ -102,6 +102,7 @@ public class Routes
         return resp.getJSON().toString();
       }
       catch(Exception e){
+		  e.printStackTrace();
         JSONObject resObj= new JSONObject();
         resObj.put("status","500 Internal Server Error");
         return resObj;
