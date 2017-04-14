@@ -96,6 +96,7 @@ public class SecurityHandler
           resObj=user.getSeqNumber().request(resObj);
           resObj.put("status","ok");
         }else{
+
           resObj.put("status","Invalid sequencial number");
         }
       }else{
@@ -121,8 +122,9 @@ public class SecurityHandler
       if(user!=null){
         if(user.getSeqNumber().verify(reqObj)){
           JSONObject pass=user.get(domain,username);
+          resObj=user.getSeqNumber().request(resObj);
           if(pass!=null){
-            resObj=user.getSeqNumber().request(resObj);
+
             resObj.put("status","ok");
             resObj.put("password",pass.get("password"));
             resObj.put("signature",pass.get("signature"));
