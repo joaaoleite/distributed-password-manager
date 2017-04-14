@@ -68,8 +68,14 @@ public class Request{
 				RequestTask request = it.next();
 				if(request.isComplete()) {
 
-					complete++;
-					JSONObject res = request.getResponse();
+					JSONObject res = null;
+					try{
+						res = request.getResponse();
+					}
+					catch(Exception e){
+						it.remove();
+						continue;
+					}
 
 					try{
 						String password = res.getString("password");
@@ -95,6 +101,8 @@ public class Request{
 						higherTs = ts;
 						response = res;
 					}
+					complete++;
+					it.remove();
 				}
 			}
 			if(!requests.isEmpty()) Thread.sleep(100);

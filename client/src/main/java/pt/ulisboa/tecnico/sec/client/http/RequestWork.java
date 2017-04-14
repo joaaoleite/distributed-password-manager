@@ -47,19 +47,24 @@ public class RequestWork implements Callable<JSONObject> {
 
 			String body = json.toString();
 
-			request = Unirest.post(url)
-				.header("accept", "application/json")
-				.header("Authorization", "Bearer "+reqToken)
-				.body(body)
-				.asJson();
+			try{
+				request = Unirest.post(url)
+					.header("accept", "application/json")
+					.header("Authorization", "Bearer "+reqToken)
+					.body(body)
+					.asJson();
 
-			response = request.getBody().getObject();
+				response = request.getBody().getObject();
 
-			if(response.getString("status").equals("Invalid sequencial number")){
-				session.SeqNumber(replica,response.getLong("seq"));
+				if(response.getString("status").equals("Invalid sequencial number")){
+					session.SeqNumber(replica,response.getLong("seq"));
+				}
+				else{
+					break;
+				}
 			}
-			else{
-				break;
+			catch(java.lang.RuntimeException e){
+				return null;
 			}
 		}
 
