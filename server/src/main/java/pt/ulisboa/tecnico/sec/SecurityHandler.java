@@ -126,9 +126,12 @@ public class SecurityHandler
           if(pass!=null){
 
             resObj.put("status","ok");
-            resObj.put("password",pass.get("password"));
-            resObj.put("signature",pass.get("signature"));
-            resObj.put("timestamp",pass.get("timestamp"));
+            if (pass.get("password")!=null){
+              resObj.put("password",pass.get("password"));
+              resObj.put("signature",pass.get("signature"));
+              resObj.put("timestamp",pass.get("timestamp"));
+            }
+
             token = user.getHMAC().sign(resObj);
           }else{
             resObj.put("status","Domain or user does not exist");
