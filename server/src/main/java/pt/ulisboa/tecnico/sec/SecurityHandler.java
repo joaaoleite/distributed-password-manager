@@ -78,7 +78,7 @@ public class SecurityHandler
     return new HttpResponse(token,resObj);
   }
 
-  public synchronized HttpResponse put(String token, JSONObject reqObj) throws Exception {
+  public  HttpResponse put(String token, JSONObject reqObj) throws Exception {
     String clientPubKey =reqObj.get("publicKey").toString();
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();
@@ -109,7 +109,7 @@ public class SecurityHandler
     return new HttpResponse(token,resObj);
   }
 
-  public HttpResponse get(String token, JSONObject reqObj) throws Exception {
+  public  HttpResponse get(String token, JSONObject reqObj) throws Exception {
     String clientPubKey =reqObj.get("publicKey").toString();
     String domain =reqObj.get("domain").toString();
     String username =reqObj.get("username").toString();

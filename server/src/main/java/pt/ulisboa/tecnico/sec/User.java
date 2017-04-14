@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.sec;
 import pt.ulisboa.tecnico.sec.lib.http.*;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONObject;
 
 
@@ -10,7 +10,7 @@ public class User
 
   private HMAC hmac;
   private SeqNumber seqNumber;
-  private HashMap<String,Password> database=  new HashMap<String,Password>();
+  private ConcurrentHashMap<String,Password> database=  new ConcurrentHashMap<String,Password>();
 
 
 
