@@ -29,6 +29,10 @@ public class RequestWork implements Callable<JSONObject> {
 	}
 
 	public JSONObject call() throws Exception {
+
+		JSONObject response = new JSONObject();
+		HttpResponse<JsonNode> request = null;
+
 		for(int i=0; i<3; i++){
 			if(this.json==null)
 				this.json = new JSONObject();
@@ -43,16 +47,18 @@ public class RequestWork implements Callable<JSONObject> {
 
 			String body = json.toString();
 
-			HttpResponse<JsonNode> request = Unirest.post(url)
+			request = Unirest.post(url)
 				.header("accept", "application/json")
 				.header("Authorization", "Bearer "+reqToken)
 				.body(body)
 				.asJson();
 
-			JSONObject response = request.getBody().getObject();
+			response = request.getBody().getObject();
 
-			if(!response.getString("status").equals("Invalid sequencial number")){
+			if(response.getString("status").equals("Invalid sequencial number")){
 				session.SeqNumber(replica,response.getLong("seq"));
+			}
+			else{
 				break;
 			}
 		}
