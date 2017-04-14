@@ -36,14 +36,8 @@ public class User
     }
 
   }
-  public JSONObject get(String domain,  String username) {
-    JSONObject resObj;
-    if(database.containsKey(domain+username)){
-      resObj=database.get(domain+username).get();
-    }else{
-      resObj= new JSONObject();
-    }
-    return resObj;
+  public JSONObject get(String domain,  String username) throws Exception {
+    return database.get(domain+username).get();
   }
 
 }

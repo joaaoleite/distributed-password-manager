@@ -121,22 +121,16 @@ public class SecurityHandler
       User user=users.get(clientPubKey);
       if(user!=null){
         if(user.getSeqNumber().verify(reqObj)){
-          JSONObject pass=user.get(domain,username);
+
           resObj=user.getSeqNumber().request(resObj);
-          if(pass!=null){
-
-            resObj.put("status","ok");
-            if (pass.get("password")!=null){
-              resObj.put("password",pass.get("password"));
-              resObj.put("signature",pass.get("signature"));
-              resObj.put("timestamp",pass.get("timestamp"));
-            }
-
+		  try{
+			  resObj=user.get(domain,username);
+           resObj.put("status","ok");
             token = user.getHMAC().sign(resObj);
-          }else{
+		}catch(Exception e){
             resObj.put("status","Domain or user does not exist");
             token="";
-          }
+         }
         }else{
           resObj.put("status","Invalid sequencial number");
           token="";
