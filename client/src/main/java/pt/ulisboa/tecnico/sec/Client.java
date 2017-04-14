@@ -22,10 +22,7 @@ public class Client {
 	public boolean register(){
 		if(started) return false;
 		try{
-			String hmacKey = api.register();
-			session.HMAC(session.RSA().decrypt(hmacKey));
-			this.started = true;
-			return true;
+			return api.register();
 		}
 		catch(Exception e){
 			return false;
@@ -34,15 +31,7 @@ public class Client {
 
 	public boolean init(){
 		try{
-			String hmacKey = api.init();
-			if(hmacKey != null){
-				session.HMAC(session.RSA().decrypt(hmacKey));
-				this.started = true;
-			}
-			else {
-				this.started = false;
-			}
-			return this.started;
+			return api.init();
 		}
 		catch(Exception e){
 			return false;

@@ -83,9 +83,11 @@ public class Request{
 
 					long ts;
 					try{
-						ts = Long.parseLong(res.getString("timestamp"));
+						ts = res.getLong("timestamp");
 					}
 					catch(Exception e){
+						System.out.println("No timestamp from server. Setting to 0.");
+						e.printStackTrace();
 						ts = 0;
 					}
 

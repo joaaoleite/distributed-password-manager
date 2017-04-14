@@ -27,12 +27,12 @@ public class Session {
 	private X509Certificate certificate;
 	private PublicKey serverPublicKey;
 	private KeyStore ksa;
-	private HMAC hmac;
 	private char[] password;
 	private String username;
 
 	private DigitalSignature signature;
 	private HashMap<Integer, SeqNumber> seq = new HashMap<Integer,SeqNumber>();
+	private HashMap<Integer, HMAC> hmac = new HashMap<Integer,HMAC>();
 
 
 	public PrivateKey getPrivateKey(){
@@ -46,11 +46,6 @@ public class Session {
 	}
 	public Certificate getCertificate(){
 		return certificate;
-	}
-	public PublicKey setServerPublicKey(PublicKey serverPublicKey) throws Exception{
-		this.serverPublicKey = serverPublicKey;
-		this.signature = new DigitalSignature(privateKey, serverPublicKey);
-		return serverPublicKey;
 	}
 
 	public AES AES(){
@@ -80,7 +75,7 @@ public class Session {
 	public DigitalSignature DigitalSignature(){
 		try{
 			if(signature == null)
-				return new DigitalSignature(privateKey);
+				return new DigitalSignature(privateKey, publicKey);
 			else
 				return this.signature;
 		}
@@ -88,12 +83,12 @@ public class Session {
 			return null;
 		}
 	}
-	public HMAC HMAC(){
-		return hmac;
+	public HMAC HMAC(int r){
+		return hmac.get(r);
 	}
-	public HMAC HMAC(String key){
-		this.hmac = new HMAC(key);
-		return this.hmac;
+	public HMAC HMAC(int r, String key){
+		this.hmac.put(r,new HMAC(key));
+		return this.hmac.get(r);
 	}
 	public void DigitalSignature(String serverPublicKey) throws Exception{
 		this.serverPublicKey = RSA.stringToPublicKey(serverPublicKey);

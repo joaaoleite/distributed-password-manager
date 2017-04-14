@@ -29,34 +29,39 @@ public class RequestWork implements Callable<JSONObject> {
 	}
 
 	public JSONObject call() throws Exception {
+		for(int i=0; i<3; i++){
+			if(this.json==null)
+				this.json = new JSONObject();
+			try{
+				json = session.SeqNumber(replica).request(json);
+			}
+			catch(NullPointerException e){
+				e.printStackTrace();
+			}
 
-		if(this.json==null)
-			this.json = new JSONObject();
-		try{
-			json = session.SeqNumber(replica).request(json);
+			String reqToken = session.DigitalSignature().sign(json);
+
+			String body = json.toString();
+
+			HttpResponse<JsonNode> request = Unirest.post(url)
+				.header("accept", "application/json")
+				.header("Authorization", "Bearer "+reqToken)
+				.body(body)
+				.asJson();
+
+			JSONObject response = request.getBody().getObject();
+
+			if(!response.getString("status").equals("Invalid sequencial number")){
+				session.SeqNumber(replica,response.getLong("seq"));
+				break;
+			}
 		}
-		catch(NullPointerException e){
-			e.printStackTrace();
-		}
-
-
-		String reqToken = session.DigitalSignature().sign(json);
-
-		String body = json.toString();
-
-		HttpResponse<JsonNode> request = Unirest.post(url)
-			.header("accept", "application/json")
-			.header("Authorization", "Bearer "+reqToken)
-			.body(body)
-			.asJson();
-
-		JSONObject response = request.getBody().getObject();
 
 		System.out.println(response);
 
 		try{
 			String resToken = request.getHeaders().get("Authorization").get(0).split("Bearer ")[1];
-			if(!session.HMAC().verify(resToken, response))
+			if(!session.HMAC(replica).verify(resToken, response))
 				throw new DigitalSignatureErrorException(resToken);
 		}
 		catch(NullPointerException e){ }
@@ -68,6 +73,9 @@ public class RequestWork implements Callable<JSONObject> {
 		}
 		else if(!session.SeqNumber(replica).verify(json))
 			throw new RepetedNounceException("");
+
+		if(session.HMAC(replica)==null && response.getString("key")!=null)
+			session.HMAC(replica,session.RSA().decrypt(response.getString("key")));
 
 		return response;
 	}

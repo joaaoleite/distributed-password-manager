@@ -21,7 +21,7 @@ public class API {
 		Request.settings(address, port, replicas);
 	}
 
-	public String register() throws RegisterFailException{
+	public boolean register() throws RegisterFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
@@ -31,7 +31,7 @@ public class API {
 			JSONObject response = register.getResponse();
 
 			String hmacKey = response.getString("key");
-			return hmacKey;
+			return hmacKey!=null;
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -39,7 +39,7 @@ public class API {
 		}
 	}
 
-	public String init() throws RegisterFailException{
+	public boolean init() throws RegisterFailException{
 		try {
 			JSONObject params = new JSONObject();
 			params.put("publicKey", publicKey);
@@ -49,7 +49,7 @@ public class API {
 			JSONObject response = init.getResponse();
 
 			String hmacKey = response.getString("key");
-			return hmacKey;
+			return hmacKey!=null;
 		}
 		catch(Exception e){
 			throw new RegisterFailException();
@@ -115,20 +115,24 @@ public class API {
 			get.make(params);
 			JSONObject response = get.getResponse();
 
-			params.put("timestamp", response.getString("timestamp"));
+			params = new JSONObject();
+			params.put("publicKey", publicKey);
+			params.put("domain", domain);
+			params.put("username", username);
+
+			params.put("timestamp", get.getHigherTs()+1);
 			String password = response.getString("password");
 			params.put("password", password);
 
 			Request put = new Request("/put");
 			put.make(params);
-			response = put.getResponse();
 
 			if(password.equals("") || password==null)
 				throw new GetFailException();
 			return password;
 		}
 		catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 			throw new GetFailException();
 		}
 	}
