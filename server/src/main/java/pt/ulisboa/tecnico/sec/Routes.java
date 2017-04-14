@@ -28,7 +28,7 @@ public class Routes
       log.add(logString);
       System.out.println(log.size());
 
-      
+
     });
 
     http.post("/init", (request, response) -> {
@@ -39,6 +39,7 @@ public class Routes
         String token = request.headers("Authorization").split("Bearer ")[1];
         HttpResponse resp =security.init(token,reqObj); //call security function
         response.header("Authorization", "Bearer "+resp.getToken());
+        System.out.println(resp.getJSON());
         return resp.getJSON();
       }
       catch(Exception e){
@@ -59,6 +60,7 @@ public class Routes
         String token = request.headers("Authorization").split("Bearer ")[1];
         HttpResponse resp =security.register(token,reqObj); //call security function
         response.header("Authorization", "Bearer "+resp.getToken());
+          System.out.println(resp.getJSON());
         return resp.getJSON();
       }
       catch(Exception e){
@@ -78,6 +80,7 @@ public class Routes
         String token = request.headers("Authorization").split("Bearer ")[1];
         HttpResponse resp =security.put(token,reqObj); //call security function
         response.header("Authorization", "Bearer "+resp.getToken());
+          System.out.println(resp.getJSON());
         return resp.getJSON().toString();
       }
       catch(Exception e){
@@ -95,6 +98,7 @@ public class Routes
         String token = request.headers("Authorization").split("Bearer ")[1];
         HttpResponse resp=security.get(token,reqObj); //call security function
         response.header("Authorization", "Bearer "+resp.getToken());
+          System.out.println(resp.getJSON());
         return resp.getJSON().toString();
       }
       catch(Exception e){
