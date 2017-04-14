@@ -12,9 +12,9 @@ public class Password{
     this.timestamp=0;
   }
   public void put(String password,String signature,long timestamp){
-    this.password=password;
-    this.signature=signature;
     if(timestamp>this.timestamp){
+      this.password=password;
+      this.signature=signature;
       this.timestamp=timestamp;
     }
   }
