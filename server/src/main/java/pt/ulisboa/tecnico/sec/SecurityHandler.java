@@ -99,13 +99,16 @@ public class SecurityHandler
           resObj=user.getSeqNumber().request(resObj);
           resObj.put("status","Invalid sequencial number");
         }
+        token = user.getHMAC().sign(resObj);
       }else{
         resObj.put("status","User does not exist");
+        token = "";
       }
     }else{
       resObj.put("status","Failed to verify signature");
+      token = "";
     }
-    token = "";
+
 
     return new HttpResponse(token,resObj);
   }
