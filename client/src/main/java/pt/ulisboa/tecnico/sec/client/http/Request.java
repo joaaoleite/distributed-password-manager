@@ -33,7 +33,9 @@ public class Request{
 		address = a;
 		basePort = p;
 		replicas = r;
-		consensus = Math.floor( (replicas-1)/2 + 1 );
+
+		int faults = Math.floor( (replicas-1)/3 );
+		consensus = Math.floor( 2*faults + 1 );
 	}
 
 	public Request(String path){
