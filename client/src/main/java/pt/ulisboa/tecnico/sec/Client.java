@@ -12,6 +12,7 @@ public class Client {
 	private Session session;
 	private API api;
 	private boolean started;
+	private int replicas;
 
 	public Client(Session session, String address, int port, int replicas){
 		this.session = session;
@@ -56,6 +57,9 @@ public class Client {
 			String domain = Hash.digest(session.RSANoPadding().encrypt(dmain));
 			String username = Hash.digest(session.RSANoPadding().encrypt(usrname));
 			String password = api.get(domain,username);
+
+			// only for ConfidenceTest
+			//return password;
 			return session.RSA().decrypt(password);
 		}
 		catch(Exception e){

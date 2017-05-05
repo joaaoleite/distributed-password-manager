@@ -7,7 +7,9 @@ import junit.framework.TestSuite;
 import pt.ulisboa.tecnico.sec.Client;
 import pt.ulisboa.tecnico.sec.client.*;
 
-public class ClientTest extends TestCase {
+import java.lang.*;
+
+public class ByzantineTest extends TestCase {
 
   private String address;
   private int port;
@@ -37,6 +39,15 @@ public class ClientTest extends TestCase {
 
     String passwordFromServer = client.retrievePassword(domain,username);
 
-    assertEquals(password, passwordFromServer);
+	System.out.println("\n\n\n\nYou have 10 seconds to close 1 replica...\n\n");
+
+	try{
+		Thread.sleep(10000);
+	}catch(Exception e){
+		fail();
+	}
+
+	assertEquals(password,passwordFromServer);
+
   }
 }

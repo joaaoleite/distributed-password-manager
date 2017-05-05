@@ -26,7 +26,7 @@ public class Request{
 	private JSONObject request;
 	private JSONObject response;
 
-	private static double consensus;
+	private static int consensus;
 	private int complete;
 
 	public static void settings(String a, int p, int r){
@@ -34,8 +34,8 @@ public class Request{
 		basePort = p;
 		replicas = r;
 
-		int faults = Math.floor( (replicas-1)/3 );
-		consensus = Math.floor( 2*faults + 1 );
+		int faults = (int) Math.floor( (replicas-1)/3 );
+		consensus = (int) Math.floor( 2*faults + 1 );
 	}
 
 	public Request(String path){

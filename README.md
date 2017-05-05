@@ -38,7 +38,7 @@ Our Password Manager is divided in 4 major projects: The Client, the Server, the
 	mvn install
 	```
 
-* Generate keystore to server
+* Generate keystore to Tests
 
 	```
 	cd keystore
@@ -47,8 +47,8 @@ Our Password Manager is divided in 4 major projects: The Client, the Server, the
 
 	```
 	...
-	Enter username: server
-	Enter password: server
+	Enter username: username
+	Enter password: password
 	...
 	```
 * Generate keystore to client
@@ -67,17 +67,17 @@ Our Password Manager is divided in 4 major projects: The Client, the Server, the
 
 * Run in parallel
 
-	* server
+	* start 4 server replicas
 
 		```
 		cd server
-		mvn compile exec:java
+		source start.sh 4
 
 	* client
 
 	```
 		cd client
-		mvn compile exec:java
+		mvn compile exec:java -Dexec.args="localhost 8080 4"
 		```
 
 		```
@@ -98,11 +98,39 @@ cd lib
 mvn test
 ```
 
+	* List of available tests:
+
+	```
+	AESTest
+	DigitalSignatureTest
+	HashTest
+	HMACTest
+	NouncesTest
+	RSANoPaddingTest
+	RSATest
+	```
+
 * Run mvn tests on Client
 
 > create server / server KeyStore
 > create username / password KeyStore
 
 ```
-mvn test 
+mvn test
 ```
+
+* Run a specific server
+
+```
+mvn test -Dtest=ReplayAttackTest
+```
+
+	* List of available tests:
+
+	```
+	ClientTest
+	ConfidenceTest
+	ManInTheMiddleTest
+	ReplayAttackTest
+	ByzantineTest
+	```

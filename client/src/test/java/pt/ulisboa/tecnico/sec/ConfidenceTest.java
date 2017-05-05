@@ -7,7 +7,7 @@ import junit.framework.TestSuite;
 import pt.ulisboa.tecnico.sec.Client;
 import pt.ulisboa.tecnico.sec.client.*;
 
-public class ClientTest extends TestCase {
+public class ConfidenceTest extends TestCase {
 
   private String address;
   private int port;
@@ -21,6 +21,10 @@ public class ClientTest extends TestCase {
     session = Session.newInstance();
   }
 
+  // =======================================
+  // WARNING:
+  // edit Client.retrievePassword on Client!!!
+  // =======================================
   public void test(){
 
     session.login("username","password");
@@ -37,6 +41,16 @@ public class ClientTest extends TestCase {
 
     String passwordFromServer = client.retrievePassword(domain,username);
 
-    assertEquals(password, passwordFromServer);
+    assertFalse(password.equals(passwordFromServer));
+
+	String decryptedPassword = "";
+	try{
+		decryptedPassword = session.RSA().decrypt(passwordFromServer);
+	}
+	catch(Exception e){
+		fail();
+	}
+
+	assertEquals(password,decryptedPassword);
   }
 }

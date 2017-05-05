@@ -45,6 +45,9 @@ public class RequestWork implements Callable<JSONObject> {
 
 			String reqToken = session.DigitalSignature().sign(json);
 
+			// only for ReplayAttackTest
+			//if(url.split("/pu")[1].equals("t")) reqToken="oldReqToken";
+
 			String body = json.toString();
 
 			try{

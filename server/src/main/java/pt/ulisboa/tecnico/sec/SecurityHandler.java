@@ -148,7 +148,10 @@ public class SecurityHandler
       token="";
     }
 
-    return new HttpResponse(token,resObj);
+	// for Main In The Middle Test
+	//resObj.put("example","123");
+
+	return new HttpResponse(token,resObj);
   }
 
 }
