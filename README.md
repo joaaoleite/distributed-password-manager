@@ -1,13 +1,10 @@
 
 # SEC Project
 
-Group 16
+Distributed password manager implemented in java
 
-* António Freire, ist177969
-* João Leite, ist177907
-* João Tomázio, ist178039
+High dependable system
 
----
 
 ### Project Structure
 
